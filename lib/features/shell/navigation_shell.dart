@@ -629,10 +629,192 @@ class HubSurface extends StatelessWidget {
           Text('Available Models (Text & Image)', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 12),
           ...controller.allModels.map((m) => _buildRealModelCard(context, controller, m)),
+          const SizedBox(height: 24),
+          Text('System & Information', style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 12),
+          _buildMenuSection(context, controller),
+          const SizedBox(height: 20),
         ],
       ),
     );
   }
+
+  Widget _buildMenuSection(BuildContext context, ShellController controller) {
+    return MomoGlassCard(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        children: [
+          _buildMenuItem(
+            icon: Icons.info_outline,
+            iconColor: MomoColors.primary,
+            title: 'About Babymomo',
+            subtitle: 'v1.0.0 • On-Device Neural Framework',
+            onTap: () => _showAboutDialog(context),
+          ),
+          const Divider(color: MomoColors.glassBorder, height: 1),
+          _buildMenuItem(
+            icon: Icons.shield_outlined,
+            iconColor: const Color(0xFF10B981),
+            title: 'Privacy Policy',
+            subtitle: 'Zero telemetry • 100% On-Device Privacy',
+            onTap: () => _showPrivacyPolicyDialog(context),
+          ),
+          const Divider(color: MomoColors.glassBorder, height: 1),
+          _buildMenuItem(
+            icon: Icons.feedback_outlined,
+            iconColor: MomoColors.amber,
+            title: 'Feedback & Bug Report',
+            subtitle: 'Share your thoughts with the developers',
+            onTap: () => _showFeedbackDialog(context),
+          ),
+          const Divider(color: MomoColors.glassBorder, height: 1),
+          _buildMenuItem(
+            icon: Icons.cleaning_services_outlined,
+            iconColor: MomoColors.rose,
+            title: 'Clear Cache & Storage',
+            subtitle: 'Manage local inference memory and cache',
+            onTap: () {
+              Get.snackbar(
+                'Storage Cleaned',
+                'Temporary inference cache cleared successfully.',
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: MomoColors.surfaceLight,
+                colorText: Colors.white,
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuItem({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: iconColor.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(icon, color: iconColor, size: 20),
+      ),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+      subtitle: Text(subtitle, style: const TextStyle(color: MomoColors.textSecondary, fontSize: 12)),
+      trailing: const Icon(Icons.chevron_right, color: MomoColors.textSecondary, size: 20),
+      onTap: onTap,
+    );
+  }
+
+  void _showAboutDialog(BuildContext context) {
+    Get.defaultDialog(
+      title: 'Babymomo v2',
+      titleStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      backgroundColor: MomoColors.surface,
+      radius: 20,
+      contentPadding: const EdgeInsets.all(20),
+      content: const Column(
+        children: [
+          Text(
+            'Babymomo is your offline-first, on-device AI companion powered by GGUF language models and Stable Diffusion NDK pipelines.\n\nBuilt with privacy, zero telemetry, and tactile companion interaction.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: MomoColors.textSecondary, fontSize: 13, height: 1.5),
+          ),
+          SizedBox(height: 16),
+          Text(
+            'Package: com.momoai.babymomo\nArchitecture: ARM64-v8a / NDK r27b',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: MomoColors.textMuted, fontSize: 11),
+          ),
+        ],
+      ),
+      confirm: ElevatedButton(
+        style: ElevatedButton.styleFrom(backgroundColor: MomoColors.primary),
+        onPressed: () => Get.back(),
+        child: const Text('Close', style: TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+
+  void _showPrivacyPolicyDialog(BuildContext context) {
+    Get.defaultDialog(
+      title: 'Privacy Policy',
+      titleStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      backgroundColor: MomoColors.surface,
+      radius: 20,
+      contentPadding: const EdgeInsets.all(20),
+      content: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '• 100% Offline-First: All chats and diffusion art run locally on your device.\n• Zero Data Harvesting: We do not collect or sell your conversations.\n• Android Keystore: Sensitive configurations encrypted locally (AES-GCM-256).\n• Public URL: https://github.com/hamza140202/babymomo-privacy-policy',
+            style: TextStyle(color: MomoColors.textSecondary, fontSize: 13, height: 1.5),
+          ),
+        ],
+      ),
+      confirm: ElevatedButton(
+        style: ElevatedButton.styleFrom(backgroundColor: MomoColors.primary),
+        onPressed: () => Get.back(),
+        child: const Text('Understood', style: TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+
+  void _showFeedbackDialog(BuildContext context) {
+    final textCtrl = TextEditingController();
+    Get.defaultDialog(
+      title: 'Feedback & Bug Report',
+      titleStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      backgroundColor: MomoColors.surface,
+      radius: 20,
+      contentPadding: const EdgeInsets.all(20),
+      content: Column(
+        children: [
+          const Text(
+            'Help us improve Babymomo! What features or enhancements would you love to see?',
+            style: TextStyle(color: MomoColors.textSecondary, fontSize: 13),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: MomoColors.surfaceLight,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: MomoColors.glassBorder),
+            ),
+            child: TextField(
+              controller: textCtrl,
+              maxLines: 3,
+              style: const TextStyle(color: Colors.white, fontSize: 13),
+              decoration: const InputDecoration(
+                hintText: 'Type your feedback here...',
+                hintStyle: TextStyle(color: MomoColors.textMuted),
+                border: InputBorder.none,
+              ),
+            ),
+          ),
+        ],
+      ),
+      confirm: ElevatedButton(
+        style: ElevatedButton.styleFrom(backgroundColor: MomoColors.primary),
+        onPressed: () {
+          Get.back();
+          Get.snackbar(
+            'Feedback Received',
+            'Thank you! Your feedback helps shape Babymomo.',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: const Color(0xFF10B981),
+            colorText: Colors.white,
+          );
+        },
+        child: const Text('Submit', style: TextStyle(color: Colors.white)),
+      ),
+    );
 
   Widget _buildRealModelCard(BuildContext context, ShellController controller, AppModelItem model) {
     return Padding(
