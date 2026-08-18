@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../../momo_ui/theme/momo_theme.dart';
 import '../../shell/navigation_controller.dart';
@@ -57,6 +58,64 @@ class _ChatSurfaceState extends State<ChatSurface> {
       _speechAvailable = false;
       return false;
     }
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollCtrl.hasClients) {
+        _scrollCtrl.animateTo(
+          _scrollCtrl.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  Future<void> _pickImage() async {
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: MomoColors.surface,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (_) => SafeArea(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          const SizedBox(height: 12),
+          Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                  color: MomoColors.glassBorder,
+                  borderRadius: BorderRadius.circular(2))),
+          const SizedBox(height: 16),
+          ListTile(
+            leading: const Icon(Icons.photo_library_outlined,
+                color: MomoColors.cyan),
+            title: const Text('Choose from Gallery',
+                style: TextStyle(color: Colors.white)),
+            onTap: () async {
+              Navigator.pop(context);
+              final xf = await _picker.pickImage(
+                  source: ImageSource.gallery, imageQuality: 85);
+              if (xf != null) setState(() => _pendingImage = File(xf.path));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.camera_alt_outlined,
+                color: MomoColors.rose),
+            title: const Text('Take Photo',
+                style: TextStyle(color: Colors.white)),
+            onTap: () async {
+              Navigator.pop(context);
+              final xf = await _picker.pickImage(
+                  source: ImageSource.camera, imageQuality: 85);
+              if (xf != null) setState(() => _pendingImage = File(xf.path));
+            },
+          ),
+          const SizedBox(height: 8),
+        ]),
+      ),
+    );
   }
 
   Future<void> _toggleMic() async {
