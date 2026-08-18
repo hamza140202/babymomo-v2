@@ -5,8 +5,8 @@ import '../shell/navigation_shell.dart';
 import '../../momo_ui/mascot/momo_master_vector.dart';
 
 /// Momo Wink Splash Screen — 4.2-second smooth opening sequence.
-/// Gives clear visual pacing for the head tilt (12 deg) and flirty wink greeting
-/// while the app initializes memory engines, storage, and models.
+/// Matches `preview_wink_splash.html` exactly with the free-standing mascot,
+/// radial aura glow, head tilt (12 deg), and flirty wink greeting.
 class MomoWinkSplashScreen extends StatefulWidget {
   const MomoWinkSplashScreen({super.key});
 
@@ -33,12 +33,12 @@ class _MomoWinkSplashScreenState extends State<MomoWinkSplashScreen>
     // 1. Entrance scale & settle (0 - 4.2s)
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
-          tween: Tween(begin: 0.6, end: 1.06)
+          tween: Tween(begin: 0.6, end: 1.05)
               .chain(CurveTween(curve: Curves.easeOutBack)),
           weight: 25),
-      TweenSequenceItem(tween: ConstantTween(1.06), weight: 55),
+      TweenSequenceItem(tween: ConstantTween(1.05), weight: 55),
       TweenSequenceItem(
-          tween: Tween(begin: 1.06, end: 1.0)
+          tween: Tween(begin: 1.05, end: 1.0)
               .chain(CurveTween(curve: Curves.easeInOut)),
           weight: 20),
     ]).animate(_controller);
@@ -90,7 +90,7 @@ class _MomoWinkSplashScreenState extends State<MomoWinkSplashScreen>
       body: Stack(
         alignment: Alignment.center,
         children: [
-          // 1. Ambient Background Glow Aura
+          // 1. Ambient Background Glow Aura (Matching preview_wink_splash.html)
           Container(
             width: 320,
             height: 320,
@@ -98,18 +98,18 @@ class _MomoWinkSplashScreenState extends State<MomoWinkSplashScreen>
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  const Color(0xFFFF6B8B).withOpacity(0.45),
+                  const Color(0xFFFF6B8B).withOpacity(0.4),
                   const Color(0xFF8B5CF6).withOpacity(0.2),
                   Colors.transparent,
                 ],
-                stops: const [0.0, 0.55, 0.8],
+                stops: const [0.0, 0.5, 0.75],
               ),
             ),
           )
               .animate(onPlay: (c) => c.repeat(reverse: true))
-              .scaleXY(begin: 0.9, end: 1.25, duration: 2800.ms, curve: Curves.easeInOut),
+              .scaleXY(begin: 0.9, end: 1.2, duration: 2500.ms, curve: Curves.easeInOut),
 
-          // 2. Animated Head-Tilt & Flirty Wink Mascot
+          // 2. Animated Head-Tilt & Flirty Wink Mascot (Free-standing)
           Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -124,17 +124,17 @@ class _MomoWinkSplashScreenState extends State<MomoWinkSplashScreen>
                         child: MomoMasterVector(
                           size: 200,
                           isWinking: _winkAnimation.value > 0.5,
-                          showBackground: true,
+                          showBackground: false, // Free-standing mascot
                         ),
                       ),
                     );
                   },
                 ),
-                const SizedBox(height: 28),
-                // Brand Title
+                const SizedBox(height: 24),
+                // Brand Title (linear-gradient #FFF to #FF8E53)
                 ShaderMask(
                   shaderCallback: (bounds) => const LinearGradient(
-                    colors: [Colors.white, Color(0xFFFF8E53), Color(0xFFFFAE33)],
+                    colors: [Colors.white, Color(0xFFFF8E53)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ).createShader(bounds),
@@ -157,7 +157,7 @@ class _MomoWinkSplashScreenState extends State<MomoWinkSplashScreen>
                     fontWeight: FontWeight.w500,
                   ),
                 ).animate().fadeIn(delay: 600.ms, duration: 700.ms),
-                const SizedBox(height: 18),
+                const SizedBox(height: 20),
                 // Initialization / Indexing pill indicator
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
