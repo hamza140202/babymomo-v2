@@ -1,0 +1,51 @@
+name: babymomo
+description: "MOMO AI Framework - Babymomo Experience Layer"
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.10.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management & DI
+  get: ^4.7.2
+
+  # Local Storage
+  hive_ce: ^2.10.1
+  hive_ce_flutter: ^2.2.0
+
+  # Networking
+  dio: ^5.8.0+1
+
+  # Utilities
+  uuid: ^4.5.1
+  path_provider: ^2.1.5
+  device_info_plus: ^11.4.0
+  package_info_plus: ^8.3.0
+  connectivity_plus: ^6.1.4
+  permission_handler: ^11.4.0
+
+  # UI
+  google_fonts: ^6.2.1
+  shimmer: ^3.0.0
+  flutter_animate: ^4.5.2
+  lottie: ^3.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  hive_ce_generator: ^1.8.0
+  build_runner: ^2.4.15
+  pigeon: ^25.2.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/animations/
+    - assets/images/
+    - assets/fonts/

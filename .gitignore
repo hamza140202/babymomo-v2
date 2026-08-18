@@ -1,0 +1,26 @@
+# Flutter & Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Android / C++ Build artifacts
+android/app/build/
+android/.gradle/
+**/build-arm64/
+**/*.o
+**/*.so
+**/*.a
+**/*.bin
+sd_native/build-arm64/
+sd_native/local_server/*.so
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
