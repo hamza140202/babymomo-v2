@@ -52,7 +52,15 @@ class NavigationController extends GetxController {
           if (activeModel.value == null && model.type == 'Text LLM') {
             activeModel.value = model;
           }
+          // Auto-load first downloaded diffusion model for Studio
+          // Prefer LCM models for fastest 4-step turbo generation (local-dream)
           if (activeImageModel.value == null && model.type == 'Image Diffusion') {
+            activeImageModel.value = model;
+          } else if (model.type == 'Image Diffusion' &&
+              activeImageModel.value != null &&
+              !activeImageModel.value!.name.toLowerCase().contains('lcm') &&
+              model.name.toLowerCase().contains('lcm')) {
+            // Auto-prefer LCM model over standard if both are downloaded
             activeImageModel.value = model;
           }
         }
