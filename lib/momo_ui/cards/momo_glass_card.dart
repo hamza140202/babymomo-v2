@@ -20,6 +20,8 @@ class MomoGlassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     Widget card = ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
       child: BackdropFilter(
@@ -27,12 +29,21 @@ class MomoGlassCard extends StatelessWidget {
         child: Container(
           padding: padding,
           decoration: BoxDecoration(
-            color: MomoColors.card.withOpacity(0.7),
+            color: isDark ? MomoColors.card.withOpacity(0.7) : Colors.white.withOpacity(0.9),
             borderRadius: BorderRadius.circular(borderRadius),
             border: Border.all(
-              color: borderColor ?? MomoColors.glassBorder,
+              color: borderColor ?? (isDark ? MomoColors.glassBorder : MomoColors.lightGlassBorder),
               width: 1.2,
             ),
+            boxShadow: isDark
+                ? null
+                : [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    )
+                  ],
           ),
           child: child,
         ),
