@@ -231,12 +231,11 @@ class NavigationShell extends StatelessWidget {
                 icon: MomoCustomIcons.hub(isActive: currentIdx == 3),
                 onTap: () => controller.changeTab(3),
                 isDark: isDark,
-              ),
             ],
           ),
-        );
-      }),
-    );
+        ),
+      );
+    });
   }
 
   Widget _buildNavItem({
