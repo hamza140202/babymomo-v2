@@ -1,14 +1,16 @@
+import 'dart:ui' show Color;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// Service managing background download notifications, WakeLocks,
 /// and Android Foreground Task execution so model downloads never freeze when backgrounded.
+/// Configures high-fidelity Babymomo app icon as largeIcon and clean silhouette as smallIcon.
 class DownloadNotificationService {
   static final FlutterLocalNotificationsPlugin _notif =
       FlutterLocalNotificationsPlugin();
 
-  static const String channelId = 'model_downloads_v4';
+  static const String channelId = 'model_downloads_v5';
   static const String channelName = 'AI Model Downloads';
   static const String channelDesc =
       'Real-time status and progress for on-device AI model downloads';
@@ -16,7 +18,7 @@ class DownloadNotificationService {
   static int _activeDownloads = 0;
 
   static Future<void> initialize() async {
-    // 1. Initialize Foreground Task for persistent background download execution
+    // 1. Initialize Foreground Task for persistent background download execution with official icon
     FlutterForegroundTask.init(
       androidNotificationOptions: AndroidNotificationOptions(
         channelId: channelId,
@@ -27,6 +29,11 @@ class DownloadNotificationService {
         enableVibration: false,
         playSound: false,
         showWhen: true,
+        iconData: const NotificationIconData(
+          resType: ResourceType.mipmap,
+          resPrefix: ResourcePrefix.ic,
+          name: 'launcher',
+        ),
       ),
       iosNotificationOptions: const IOSNotificationOptions(
         showNotification: false,
@@ -40,9 +47,9 @@ class DownloadNotificationService {
       ),
     );
 
-    // 2. Initialize local notifications plugin
+    // 2. Initialize local notifications plugin with transparent silhouette icon
     const androidSettings =
-        AndroidInitializationSettings('@mipmap/launcher_icon');
+        AndroidInitializationSettings('@drawable/ic_notification');
     const initSettings = InitializationSettings(android: androidSettings);
     await _notif.initialize(initSettings);
 
@@ -98,6 +105,7 @@ class DownloadNotificationService {
   }
 
   /// Updates the progress bar and status in the active Android notification tray.
+  /// Uses official Babymomo full-color mascot as largeIcon and clean silhouette as smallIcon.
   static Future<void> showProgress({
     required int id,
     required String modelName,
@@ -121,7 +129,9 @@ class DownloadNotificationService {
       onlyAlertOnce: true,
       playSound: false,
       enableVibration: false,
-      icon: '@mipmap/launcher_icon',
+      icon: '@drawable/ic_notification',
+      largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
+      color: const Color(0xFFFF6B8B),
       subText: isDone ? '100%' : '$progress%',
       showWhen: true,
     );
