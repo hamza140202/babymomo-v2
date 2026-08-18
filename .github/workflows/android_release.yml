@@ -41,6 +41,9 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
+      - name: Generate Official Launcher Icons
+        run: dart run flutter_launcher_icons
+
       - name: Build Android APK (Release)
         run: flutter build apk --release
 
@@ -61,7 +64,6 @@ jobs:
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
         with:
           tag_name: v1.0.0-build-${{ github.run_number }}
           name: Babymomo v2 Android Build ${{ github.run_number }}
@@ -69,5 +71,6 @@ jobs:
           generate_release_notes: true
           draft: false
           prerelease: false
+          overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

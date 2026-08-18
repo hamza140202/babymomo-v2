@@ -1,10 +1,10 @@
-name: babymomo_v2
-description: "MOMO AI Framework - Babymomo Experience Layer v2"
+name: babymomo
+description: "MOMO AI Framework - Babymomo Experience Layer"
 publish_to: 'none'
-version: 1.0.0+1
+version: 0.1.0
 
 environment:
-  sdk: ^3.5.0
+  sdk: ^3.10.1
 
 dependencies:
   flutter:
@@ -41,6 +41,15 @@ dev_dependencies:
   hive_ce_generator: ^1.8.0
   build_runner: ^2.4.15
   pigeon: ^25.2.0
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/ic_launcher_512.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#FF6B8B"
+  adaptive_icon_foreground: "assets/images/ic_launcher_512.png"
 
 flutter:
   uses-material-design: true
