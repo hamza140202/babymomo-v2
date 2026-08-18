@@ -22,17 +22,9 @@ subprojects {
 }
 
 subprojects {
-    afterEvaluate {
-        if (project.plugins.hasPlugin("com.android.library") || project.plugins.hasPlugin("com.android.application")) {
-            val android = project.extensions.findByName("android")
-            if (android is com.android.build.gradle.BaseExtension) {
-                android.compileSdkVersion(35)
-                android.defaultConfig {
-                    if (minSdk == null || minSdk!! < 24) {
-                        minSdk = 24
-                    }
-                }
-            }
+    project.plugins.withId("com.android.library") {
+        (project.extensions.findByName("android") as? com.android.build.gradle.LibraryExtension)?.apply {
+            compileSdk = 35
         }
     }
 }
