@@ -18,15 +18,18 @@ subprojects {
 }
 
 subprojects {
-    project.evaluationDependsOn(":app")
+    if (project.name != "app") {
+        afterEvaluate {
+            val androidExt = project.extensions.findByName("android")
+            if (androidExt is com.android.build.gradle.BaseExtension) {
+                androidExt.compileSdkVersion(35)
+            }
+        }
+    }
 }
 
 subprojects {
-    project.plugins.withId("com.android.library") {
-        (project.extensions.findByName("android") as? com.android.build.gradle.LibraryExtension)?.apply {
-            compileSdk = 35
-        }
-    }
+    project.evaluationDependsOn(":app")
 }
 
 tasks.register<Delete>("clean") {
