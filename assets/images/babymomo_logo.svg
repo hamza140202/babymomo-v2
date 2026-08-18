@@ -1,0 +1,95 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Rich Vibrant Coral-Peach & Warm Sunset Gradient Background (Distinct, Light, Vivid, Non-Dark) -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FF6B8B"/>
+      <stop offset="45%" stop-color="#FF8E53"/>
+      <stop offset="100%" stop-color="#FFAE33"/>
+    </linearGradient>
+
+    <!-- Mascot Body Soft Porcelain / Mochi Gradient -->
+    <linearGradient id="bodyGrad" x1="140" y1="120" x2="370" y2="430" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="70%" stop-color="#FFF5F5"/>
+      <stop offset="100%" stop-color="#FED7AA"/>
+    </linearGradient>
+
+    <!-- Deep Tactile Drop Shadow to separate mascot from colorful background -->
+    <filter id="mascotShadow" x="60" y="70" width="392" height="392" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#B91C1C" flood-opacity="0.25"/>
+    </filter>
+
+    <!-- Inner Ear Pastel Tint -->
+    <linearGradient id="earInner" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FDA4AF"/>
+      <stop offset="100%" stop-color="#F43F5E"/>
+    </linearGradient>
+
+    <!-- Cute Blush Gradient -->
+    <radialGradient id="blushGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF4D6D" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#FF4D6D" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Sparkle Glow Filter -->
+    <filter id="glow" x="320" y="90" width="100" height="100" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- App Icon Squircle Background (Vibrant Light Peach-Coral) -->
+  <rect width="512" height="512" rx="118" fill="url(#bgGrad)"/>
+  <rect width="508" height="508" x="2" y="2" rx="116" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="3"/>
+
+  <!-- Subtle Ambient Glow Rings on Background for Depth -->
+  <circle cx="256" cy="270" r="175" fill="#FFFFFF" fill-opacity="0.12"/>
+  <circle cx="256" cy="270" r="145" fill="#FFFFFF" fill-opacity="0.08"/>
+
+  <!-- Bottom Soft Shadow -->
+  <ellipse cx="256" cy="425" rx="135" ry="24" fill="#C2410C" fill-opacity="0.25"/>
+
+  <!-- Mascot Main Body Group with Shadow -->
+  <g filter="url(#mascotShadow)">
+    <!-- Cute Ears -->
+    <!-- Left Ear -->
+    <ellipse cx="178" cy="162" rx="38" ry="50" transform="rotate(-18 178 162)" fill="#FFFFFF"/>
+    <ellipse cx="178" cy="162" rx="23" ry="34" transform="rotate(-18 178 162)" fill="url(#earInner)"/>
+
+    <!-- Right Ear -->
+    <ellipse cx="334" cy="162" rx="38" ry="50" transform="rotate(18 334 162)" fill="#FFFFFF"/>
+    <ellipse cx="334" cy="162" rx="23" ry="34" transform="rotate(18 334 162)" fill="url(#earInner)"/>
+
+    <!-- Main Character Body (Crisp, High-Contrast White Mochi) -->
+    <path d="M 256 148 C 362 148, 396 208, 396 295 C 396 385, 348 406, 256 406 C 164 406, 116 385, 116 295 C 116 208, 150 148, 256 148 Z" fill="url(#bodyGrad)" stroke="#FFE4E6" stroke-width="2"/>
+  </g>
+
+  <!-- Rosy Cheeks -->
+  <circle cx="175" cy="305" r="28" fill="url(#blushGrad)"/>
+  <circle cx="337" cy="305" r="28" fill="url(#blushGrad)"/>
+
+  <!-- Big Kawaii Shiny Eyes (Bold, expressive, crystal clear at tiny sizes) -->
+  <!-- Left Eye -->
+  <ellipse cx="205" cy="265" rx="20" ry="27" fill="#18181B"/>
+  <ellipse cx="213" cy="253" rx="8" ry="11" fill="#FFFFFF"/>
+  <circle cx="199" cy="277" r="4.5" fill="#FFFFFF"/>
+  <circle cx="218" cy="275" r="2.5" fill="#FFFFFF" fill-opacity="0.8"/>
+
+  <!-- Right Eye -->
+  <ellipse cx="307" cy="265" rx="20" ry="27" fill="#18181B"/>
+  <ellipse cx="315" cy="253" rx="8" ry="11" fill="#FFFFFF"/>
+  <circle cx="301" cy="277" r="4.5" fill="#FFFFFF"/>
+  <circle cx="320" cy="275" r="2.5" fill="#FFFFFF" fill-opacity="0.8"/>
+
+  <!-- Happy Smiling Mouth -->
+  <path d="M 242 290 Q 256 306, 270 290" stroke="#18181B" stroke-width="5" stroke-linecap="round" fill="none"/>
+  
+  <!-- Tiny Cute Tongue Peeking -->
+  <path d="M 249 297 Q 256 308, 263 297 Z" fill="#FB7185"/>
+
+  <!-- Magical AI Sparkle Star (Floating Top Right) -->
+  <g filter="url(#glow)">
+    <path d="M 370 120 Q 376 138, 394 144 Q 376 150, 370 168 Q 364 150, 346 144 Q 364 138, 370 120 Z" fill="#FFFBEB"/>
+    <circle cx="370" cy="144" r="5" fill="#FFFFFF"/>
+  </g>
+</svg>

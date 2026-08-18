@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Babymomo Logo — High-Contrast Vibrant Edition</title>
+  <style>
+    body {
+      background-color: #F1F5F9;
+      color: #0F172A;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 30px;
+    }
+    .preview-container {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .preview-card {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 36px;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+    }
+    .android-screen-mock {
+      background: #E2E8F0;
+      border-radius: 40px;
+      padding: 24px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 280px;
+    }
+    .logo-container {
+      width: 240px;
+      height: 240px;
+      margin-bottom: 20px;
+      border-radius: 54px;
+      overflow: hidden;
+      box-shadow: 0 16px 35px rgba(255, 107, 139, 0.35);
+    }
+    .logo-container img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    h1 {
+      margin: 0 0 6px 0;
+      font-size: 26px;
+      font-weight: 800;
+      color: #0F172A;
+    }
+    p {
+      margin: 0 0 20px 0;
+      color: #64748B;
+      font-size: 14px;
+    }
+    .sizes-row {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .size-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #64748B;
+    }
+    .android-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 16px;
+      width: 100%;
+    }
+    .android-app-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      color: #334155;
+    }
+    .android-app-icon img {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+    }
+    .dummy-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: #CBD5E1;
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-container">
+    <!-- Master View -->
+    <div class="preview-card">
+      <div class="logo-container">
+        <img src="babymomo_master_icon.svg" alt="Babymomo Icon">
+      </div>
+      <h1>Babymomo</h1>
+      <p>Vibrant Sunset Peach-Coral • Crisp Light Contrast</p>
+
+      <div class="sizes-row">
+        <div class="size-item">
+          <img src="babymomo_master_icon.svg" style="width: 72px; height: 72px; border-radius: 18px;">
+          <span>72px</span>
+        </div>
+        <div class="size-item">
+          <img src="babymomo_master_icon.svg" style="width: 48px; height: 48px; border-radius: 12px;">
+          <span>48px</span>
+        </div>
+        <div class="size-item">
+          <img src="babymomo_master_icon.svg" style="width: 36px; height: 36px; border-radius: 9px;">
+          <span>36px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Android Home Screen Mockup -->
+    <div class="android-screen-mock">
+      <span style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 12px;">Android Home Screen Test</span>
+      <div class="android-grid">
+        <div class="dummy-icon"></div>
+        <div class="android-app-icon">
+          <img src="babymomo_master_icon.svg">
+          <span>Babymomo</span>
+        </div>
+        <div class="dummy-icon"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
