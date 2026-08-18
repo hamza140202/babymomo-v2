@@ -10753,6 +10753,30 @@
       "_origin": "ast"
     },
     {
+      "id": "services_download_notification_service_channelid",
+      "label": "channelId",
+      "file_type": "code",
+      "source_file": "services/download_notification_service.dart",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
+      "id": "services_download_notification_service_channelname",
+      "label": "channelName",
+      "file_type": "code",
+      "source_file": "services/download_notification_service.dart",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
+      "id": "services_download_notification_service_channeldesc",
+      "label": "channelDesc",
+      "file_type": "code",
+      "source_file": "services/download_notification_service.dart",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
       "id": "services_download_notification_service_initialize",
       "label": "initialize",
       "file_type": "code",
@@ -10779,6 +10803,14 @@
     {
       "id": "package_flutter_local_notifications_flutter_local_notifications_dart",
       "label": "package:flutter_local_notifications/flutter_local_notifications.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
+      "id": "package_permission_handler_permission_handler_dart",
+      "label": "package:permission_handler/permission_handler.dart",
       "file_type": "code",
       "source_file": null,
       "source_location": null,
@@ -29034,6 +29066,47 @@
     },
     {
       "source": "services_download_notification_service",
+      "target": "services_download_notification_service_channelid",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "services/download_notification_service.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "services_download_notification_service",
+      "target": "static_const_string",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "services/download_notification_service.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "context": "variable_type"
+    },
+    {
+      "source": "services_download_notification_service",
+      "target": "services_download_notification_service_channelname",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "services/download_notification_service.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "services_download_notification_service",
+      "target": "services_download_notification_service_channeldesc",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "services/download_notification_service.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "services_download_notification_service",
       "target": "services_download_notification_service_initialize",
       "relation": "defines",
       "confidence": "EXTRACTED",
@@ -29065,6 +29138,16 @@
     {
       "source": "services_download_notification_service",
       "target": "package_flutter_local_notifications_flutter_local_notifications_dart",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "services/download_notification_service.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "services_download_notification_service",
+      "target": "package_permission_handler_permission_handler_dart",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,

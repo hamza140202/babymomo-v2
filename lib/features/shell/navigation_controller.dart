@@ -87,14 +87,22 @@ class NavigationController extends GetxController {
 
       final dio = Dio(BaseOptions(
         connectTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(minutes: 30),
+        receiveTimeout: const Duration(minutes: 60),
         sendTimeout: const Duration(seconds: 30),
       ));
 
       try {
+        final initialMb = (downloadedBytes / (1024 * 1024)).toStringAsFixed(1);
         model.statusMessage.value = downloadedBytes > 0
-            ? 'Resuming from ${(downloadedBytes / (1024 * 1024)).toStringAsFixed(1)} MB...'
-            : 'Starting download...';
+            ? 'Resuming from $initialMb MB...'
+            : 'Connecting to server...';
+
+        await DownloadNotificationService.showProgress(
+          id: model.notifId,
+          modelName: model.name,
+          progress: (model.downloadProgress.value * 100).toInt(),
+          statusText: model.statusMessage.value,
+        );
 
         final response = await dio.get<ResponseBody>(
           model.url,
@@ -104,6 +112,7 @@ class NavigationController extends GetxController {
             followRedirects: true,
             headers: {
               if (downloadedBytes > 0) 'Range': 'bytes=$downloadedBytes-',
+              'User-Agent': 'Mozilla/5.0 (Android; Mobile; Babymomo/2.0)',
             },
           ),
         );
@@ -114,27 +123,48 @@ class NavigationController extends GetxController {
 
         final sink = tempFile.openWrite(mode: FileMode.append);
         int currentBytes = downloadedBytes;
-        int lastNotifUpdate = 0;
+        int lastNotifUpdate = -1;
+        DateTime lastNotifTime = DateTime.now();
+        DateTime lastSpeedCheck = DateTime.now();
+        int bytesSinceLastSpeedCheck = 0;
+        String speedText = '';
 
         await response.data!.stream.listen((chunk) {
           currentBytes += chunk.length;
+          bytesSinceLastSpeedCheck += chunk.length;
           sink.add(chunk);
 
           final progress = totalBytes > 0 ? currentBytes / totalBytes : 0.0;
           model.downloadProgress.value = progress;
 
+          final now = DateTime.now();
+          final elapsedMs = now.difference(lastSpeedCheck).inMilliseconds;
+          if (elapsedMs >= 600) {
+            final speedBytesPerSec =
+                (bytesSinceLastSpeedCheck * 1000) / elapsedMs;
+            final speedMBps = speedBytesPerSec / (1024 * 1024);
+            speedText = '${speedMBps.toStringAsFixed(1)} MB/s';
+            bytesSinceLastSpeedCheck = 0;
+            lastSpeedCheck = now;
+          }
+
           final mbDone = (currentBytes / (1024 * 1024)).toStringAsFixed(1);
           final mbTotal = (totalBytes / (1024 * 1024)).toStringAsFixed(1);
-          model.statusMessage.value = '$mbDone MB / $mbTotal MB';
+          model.statusMessage.value = speedText.isNotEmpty
+              ? '$mbDone / $mbTotal MB ($speedText)'
+              : '$mbDone / $mbTotal MB';
 
           final pct = (progress * 100).toInt();
-          if (pct - lastNotifUpdate >= 2) {
+          if (pct != lastNotifUpdate &&
+              (now.difference(lastNotifTime).inMilliseconds >= 400 ||
+                  pct == 100)) {
             lastNotifUpdate = pct;
+            lastNotifTime = now;
             DownloadNotificationService.showProgress(
               id: model.notifId,
               modelName: model.name,
               progress: pct,
-              statusText: '$mbDone MB / $mbTotal MB',
+              statusText: model.statusMessage.value,
             );
           }
         }, cancelOnError: true).asFuture();
