@@ -312,8 +312,10 @@ class NavigationController extends GetxController {
 
     try {
       await for (final partial in MomoChatEngine.respond(
-        input,
+        text.trim(),
         activeModelName: activeModel.value?.name,
+        imagePath: imageFile?.path,
+        isVision: activeModel.value?.isVision ?? false,
       )) {
         streamBuffer.value = partial;
         chatMessages[chatMessages.length - 1] = {

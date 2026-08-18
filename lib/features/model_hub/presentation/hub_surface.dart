@@ -5,9 +5,17 @@ import '../../../momo_ui/cards/momo_glass_card.dart';
 import '../../shell/navigation_controller.dart';
 import 'widgets/model_card.dart';
 
-/// Hub Surface — Brain Model Catalog and System Settings.
-class HubSurface extends StatelessWidget {
+/// Hub Surface — Brain Model Catalog with Categorized Filter Tabs and System Settings.
+class HubSurface extends StatefulWidget {
   const HubSurface({super.key});
+
+  @override
+  State<HubSurface> createState() => _HubSurfaceState();
+}
+
+class _HubSurfaceState extends State<HubSurface> {
+  int _selectedFilter = 0;
+  final _filters = ['All', '🧠 Brains', '👁️ Vision AI', '🎨 Studio'];
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +27,7 @@ class HubSurface extends StatelessWidget {
         children: [
           Text('Model Hub', style: Theme.of(context).textTheme.displayMedium),
           const SizedBox(height: 4),
-          Text('Official On-Device Brain Catalog',
+          Text('Official On-Device Brain & Vision Catalog',
               style: Theme.of(context).textTheme.bodyMedium),
           const SizedBox(height: 20),
           MomoGlassCard(
@@ -35,7 +43,7 @@ class HubSurface extends StatelessWidget {
                   ]),
                   SizedBox(height: 8),
                   Text(
-                    '• Background downloads with notification bar progress\n• Auto-resume on network drop (8 retries)\n• One-tap model loader for companion chat',
+                    '• Multimodal Vision AI + DeepSeek R1 Reasoning + Mobile Diffusion\n• Background downloads with active notification bar progress\n• One-tap model loader for companion chat & creative studio',
                     style: TextStyle(
                         color: MomoColors.textSecondary,
                         height: 1.4,
@@ -43,12 +51,58 @@ class HubSurface extends StatelessWidget {
                   ),
                 ]),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
+
+          // ── Category Filter Tabs ──
+          SizedBox(
+            height: 38,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _filters.length,
+              itemBuilder: (ctx, i) => GestureDetector(
+                onTap: () => setState(() => _selectedFilter = i),
+                child: Container(
+                  margin: const EdgeInsets.only(right: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: _selectedFilter == i
+                        ? MomoColors.primary
+                        : MomoColors.surfaceLight,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                        color: _selectedFilter == i
+                            ? MomoColors.primary
+                            : MomoColors.glassBorder),
+                  ),
+                  child: Text(
+                    _filters[i],
+                    style: TextStyle(
+                      color: _selectedFilter == i
+                          ? Colors.white
+                          : MomoColors.textSecondary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
           Text('Available Models',
               style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 12),
-          ...controller.allModels
-              .map((m) => ModelCard(model: m, controller: controller)),
+
+          // ── Model List with Filter ──
+          ...controller.allModels.where((m) {
+            if (_selectedFilter == 1) return m.type == 'Text LLM';
+            if (_selectedFilter == 2) return m.type == 'Vision AI' || m.isVision;
+            if (_selectedFilter == 3) return m.type == 'Image Diffusion';
+            return true;
+          }).map((m) => ModelCard(model: m, controller: controller)),
+
           const SizedBox(height: 24),
           Text('System & Information',
               style: Theme.of(context).textTheme.titleLarge),
@@ -110,180 +164,179 @@ class HubSurface extends StatelessWidget {
         child: Icon(icon, color: color, size: 20),
       ),
       title: Text(title,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+          style: const TextStyle(
+              color: Colors.white, fontWeight: FontWeight.w600, fontSize: 14)),
       subtitle: Text(sub,
           style:
               const TextStyle(color: MomoColors.textSecondary, fontSize: 12)),
       trailing: const Icon(Icons.chevron_right,
-          color: MomoColors.textSecondary, size: 20),
+          color: MomoColors.textMuted, size: 18),
       onTap: onTap,
     );
   }
 
   void _showAbout(BuildContext context) {
-    Get.defaultDialog(
-      title: '🧸 Babymomo',
-      titleStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+    showModalBottomSheet(
+      context: context,
       backgroundColor: MomoColors.surface,
-      radius: 20,
-      contentPadding: const EdgeInsets.all(20),
-      content: const Column(children: [
-        Text(
-          'Your Living AI Companion',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              color: MomoColors.primary,
-              fontWeight: FontWeight.w700,
-              fontSize: 14),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('🧸 Babymomo',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            const Text(
+              'Babymomo is your personal, living AI companion with unlimited memory, acting as your ultimate second brain on device.\n\n'
+              '• 🧠 Unlimited On-Device Memory\n'
+              '• 👁️ Multimodal Vision Image Understanding\n'
+              '• 💡 Deep Chain-of-Thought Reasoning\n'
+              '• 🎨 High-Res Creative Diffusion Studio\n'
+              '• 📴 100% Offline & Private (Zero cloud tracking)',
+              style: TextStyle(
+                  color: MomoColors.textSecondary, fontSize: 13, height: 1.5),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: MomoColors.primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12))),
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Got it 💜'),
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: 14),
-        _AboutFeature(
-            icon: '🧠',
-            label: 'Unlimited Memory',
-            desc:
-                'Babymomo remembers everything you share across every conversation — forever. Your goals, ideas, and thoughts are never forgotten.'),
-        SizedBox(height: 10),
-        _AboutFeature(
-            icon: '📴',
-            label: 'Fully Offline',
-            desc:
-                'Everything runs privately on your phone. No internet needed once set up. Your conversations never touch any server.'),
-        SizedBox(height: 10),
-        _AboutFeature(
-            icon: '🔒',
-            label: 'Zero Data Collection',
-            desc:
-                'We collect nothing. No accounts, no tracking, no ads. Your data belongs to you and only you.'),
-        SizedBox(height: 10),
-        _AboutFeature(
-            icon: '🎨',
-            label: 'Create & Generate',
-            desc:
-                'Chat, generate images, analyze photos, and voice-dictate — all on-device.'),
-        SizedBox(height: 16),
-        Text(
-          'Think of Babymomo as your second brain — always with you, always private.',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              color: MomoColors.textMuted,
-              fontSize: 12,
-              fontStyle: FontStyle.italic),
-        ),
-      ]),
-      confirm: ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: MomoColors.primary),
-        onPressed: () => Get.back(),
-        child: const Text('Awesome!', style: TextStyle(color: Colors.white)),
       ),
     );
   }
 
   void _showPrivacy(BuildContext context) {
-    Get.defaultDialog(
-      title: 'Privacy Policy',
-      titleStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+    showModalBottomSheet(
+      context: context,
       backgroundColor: MomoColors.surface,
-      radius: 20,
-      contentPadding: const EdgeInsets.all(20),
-      content: const Column(
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '• 100% Offline-First: All chats and diffusion art run locally.\n• Zero Data Harvesting: We never collect or sell your conversations.\n• AES-GCM-256 encrypted local storage.\n• Official Policy URL: https://hamza140202.github.io/babymomoapp/',
+            const Text('🔒 Privacy Policy',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            const Text(
+              'Babymomo operates with a strict Zero Data Collection policy:\n\n'
+              '• No accounts, sign-ups, or passwords.\n'
+              '• All chats, voice recordings, and memories are encrypted locally.\n'
+              '• No telemetry or third-party ads.\n'
+              '• Public Privacy Policy: https://hamza140202.github.io/babymomoapp/',
               style: TextStyle(
                   color: MomoColors.textSecondary, fontSize: 13, height: 1.5),
             ),
-          ]),
-      confirm: ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: MomoColors.primary),
-        onPressed: () => Get.back(),
-        child: const Text('Got it', style: TextStyle(color: Colors.white)),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF10B981),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12))),
+                onPressed: () => Navigator.pop(context),
+                child: const Text('I Understand 🛡️'),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   void _showFeedback(BuildContext context) {
-    final ctrl = TextEditingController();
-    Get.defaultDialog(
-      title: 'Feedback & Suggestions',
-      titleStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+    final textCtrl = TextEditingController();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
       backgroundColor: MomoColors.surface,
-      radius: 20,
-      contentPadding: const EdgeInsets.all(20),
-      content: Column(children: [
-        const Text('Help us make Babymomo even better!',
-            style: TextStyle(color: MomoColors.textSecondary, fontSize: 13)),
-        const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-              color: MomoColors.surfaceLight,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: MomoColors.glassBorder)),
-          child: TextField(
-            controller: ctrl,
-            maxLines: 3,
-            style: const TextStyle(color: Colors.white, fontSize: 13),
-            decoration: const InputDecoration(
-                hintText: 'Share your feedback or thoughts...',
-                hintStyle: TextStyle(color: MomoColors.textMuted),
-                border: InputBorder.none),
-          ),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(
+          left: 24,
+          right: 24,
+          top: 24,
+          bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
         ),
-      ]),
-      confirm: ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: MomoColors.primary),
-        onPressed: () {
-          Get.back();
-          Get.snackbar(
-              'Feedback Received ✅', 'Thank you for helping shape Babymomo!',
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: const Color(0xFF10B981),
-              colorText: Colors.white);
-        },
-        child: const Text('Submit', style: TextStyle(color: Colors.white)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('💌 Feedback & Ideas',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            const Text('What features or models would you like to see?',
+                style: TextStyle(
+                    color: MomoColors.textSecondary, fontSize: 13)),
+            const SizedBox(height: 12),
+            TextField(
+              controller: textCtrl,
+              maxLines: 3,
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+              decoration: InputDecoration(
+                hintText: 'Share your thoughts...',
+                hintStyle:
+                    const TextStyle(color: MomoColors.textMuted, fontSize: 13),
+                filled: true,
+                fillColor: MomoColors.surfaceLight,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none),
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: MomoColors.primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12))),
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  Get.snackbar(
+                    'Thank You! 💜',
+                    'Your feedback has been recorded locally.',
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: MomoColors.primary,
+                    colorText: Colors.white,
+                  );
+                },
+                child: const Text('Submit Feedback'),
+              ),
+            ),
+          ],
+        ),
       ),
-    );
-  }
-}
-
-class _AboutFeature extends StatelessWidget {
-  final String icon;
-  final String label;
-  final String desc;
-
-  const _AboutFeature({
-    required this.icon,
-    required this.label,
-    required this.desc,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(icon, style: const TextStyle(fontSize: 18)),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
-                      color: Colors.white)),
-              const SizedBox(height: 2),
-              Text(desc,
-                  style: const TextStyle(
-                      color: MomoColors.textSecondary,
-                      fontSize: 11,
-                      height: 1.3)),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

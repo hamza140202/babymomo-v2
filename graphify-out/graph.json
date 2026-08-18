@@ -617,6 +617,22 @@
       "_origin": "ast"
     },
     {
+      "id": "engine_momo_chat_engine_buildreasoningthought",
+      "label": "_buildReasoningThought",
+      "file_type": "code",
+      "source_file": "features/chat/engine/momo_chat_engine.dart",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
+      "id": "engine_momo_chat_engine_buildreasoningconclusion",
+      "label": "_buildReasoningConclusion",
+      "file_type": "code",
+      "source_file": "features/chat/engine/momo_chat_engine.dart",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
       "id": "engine_momo_chat_engine_isgreeting",
       "label": "_isGreeting",
       "file_type": "code",
@@ -2425,16 +2441,16 @@
       "_origin": "ast"
     },
     {
-      "id": "models_app_model_item_isdownloaded",
-      "label": "isDownloaded",
+      "id": "models_app_model_item_isvision",
+      "label": "isVision",
       "file_type": "code",
       "source_file": "features/model_hub/models/app_model_item.dart",
       "source_location": null,
       "_origin": "ast"
     },
     {
-      "id": "models_app_model_item_downloadprogress",
-      "label": "downloadProgress",
+      "id": "models_app_model_item_isdownloaded",
+      "label": "isDownloaded",
       "file_type": "code",
       "source_file": "features/model_hub/models/app_model_item.dart",
       "source_location": null,
@@ -2451,6 +2467,14 @@
     {
       "id": "models_app_model_item_ispaused",
       "label": "isPaused",
+      "file_type": "code",
+      "source_file": "features/model_hub/models/app_model_item.dart",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
+      "id": "models_app_model_item_downloadprogress",
+      "label": "downloadProgress",
       "file_type": "code",
       "source_file": "features/model_hub/models/app_model_item.dart",
       "source_location": null,
@@ -2513,32 +2537,32 @@
       "_origin": "ast"
     },
     {
-      "id": "presentation_hub_surface_aboutfeature",
-      "label": "_AboutFeature",
+      "id": "presentation_hub_surface_hubsurfacestate",
+      "label": "_HubSurfaceState",
       "file_type": "code",
       "source_file": "features/model_hub/presentation/hub_surface.dart",
       "source_location": null,
       "_origin": "ast"
     },
     {
-      "id": "presentation_hub_surface_icon",
-      "label": "icon",
+      "id": "presentation_hub_surface_selectedfilter",
+      "label": "_selectedFilter",
       "file_type": "code",
       "source_file": "features/model_hub/presentation/hub_surface.dart",
       "source_location": null,
       "_origin": "ast"
     },
     {
-      "id": "presentation_hub_surface_label",
-      "label": "label",
+      "id": "presentation_hub_surface_filters",
+      "label": "_filters",
       "file_type": "code",
       "source_file": "features/model_hub/presentation/hub_surface.dart",
       "source_location": null,
       "_origin": "ast"
     },
     {
-      "id": "presentation_hub_surface_desc",
-      "label": "desc",
+      "id": "presentation_hub_surface_createstate",
+      "label": "createState",
       "file_type": "code",
       "source_file": "features/model_hub/presentation/hub_surface.dart",
       "source_location": null,
@@ -11762,6 +11786,26 @@
     },
     {
       "source": "engine_momo_chat_engine",
+      "target": "engine_momo_chat_engine_buildreasoningthought",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "features/chat/engine/momo_chat_engine.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "engine_momo_chat_engine",
+      "target": "engine_momo_chat_engine_buildreasoningconclusion",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "features/chat/engine/momo_chat_engine.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "engine_momo_chat_engine",
       "target": "engine_momo_chat_engine_isgreeting",
       "relation": "defines",
       "confidence": "EXTRACTED",
@@ -11863,6 +11907,16 @@
     {
       "source": "engine_momo_chat_engine",
       "target": "dart_async",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "features/chat/engine/momo_chat_engine.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "engine_momo_chat_engine",
+      "target": "dart_io",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -14841,6 +14895,16 @@
     },
     {
       "source": "models_app_model_item",
+      "target": "models_app_model_item_isvision",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "features/model_hub/models/app_model_item.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "models_app_model_item",
       "target": "models_app_model_item_isdownloaded",
       "relation": "defines",
       "confidence": "EXTRACTED",
@@ -14852,27 +14916,6 @@
     {
       "source": "models_app_model_item",
       "target": "rxbool",
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "features/model_hub/models/app_model_item.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "context": "variable_type"
-    },
-    {
-      "source": "models_app_model_item",
-      "target": "models_app_model_item_downloadprogress",
-      "relation": "defines",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "features/model_hub/models/app_model_item.dart",
-      "source_location": null,
-      "weight": 1.0
-    },
-    {
-      "source": "models_app_model_item",
-      "target": "rxdouble",
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -14900,6 +14943,27 @@
       "source_file": "features/model_hub/models/app_model_item.dart",
       "source_location": null,
       "weight": 1.0
+    },
+    {
+      "source": "models_app_model_item",
+      "target": "models_app_model_item_downloadprogress",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "features/model_hub/models/app_model_item.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "models_app_model_item",
+      "target": "rxdouble",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "features/model_hub/models/app_model_item.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "context": "variable_type"
     },
     {
       "source": "models_app_model_item",
@@ -15005,7 +15069,7 @@
     },
     {
       "source": "presentation_hub_surface_hubsurface",
-      "target": "statelesswidget",
+      "target": "statefulwidget",
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -15015,7 +15079,7 @@
     },
     {
       "source": "presentation_hub_surface",
-      "target": "presentation_hub_surface_aboutfeature",
+      "target": "presentation_hub_surface_hubsurfacestate",
       "relation": "defines",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -15024,8 +15088,8 @@
       "weight": 1.0
     },
     {
-      "source": "presentation_hub_surface_aboutfeature",
-      "target": "statelesswidget",
+      "source": "presentation_hub_surface_hubsurfacestate",
+      "target": "state",
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -15034,8 +15098,18 @@
       "weight": 1.0
     },
     {
+      "source": "presentation_hub_surface_hubsurfacestate",
+      "target": "presentation_hub_surface_hubsurface",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "features/model_hub/presentation/hub_surface.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
       "source": "presentation_hub_surface",
-      "target": "presentation_hub_surface_icon",
+      "target": "presentation_hub_surface_selectedfilter",
       "relation": "defines",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -15045,7 +15119,7 @@
     },
     {
       "source": "presentation_hub_surface",
-      "target": "presentation_hub_surface_label",
+      "target": "presentation_hub_surface_filters",
       "relation": "defines",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -15055,7 +15129,7 @@
     },
     {
       "source": "presentation_hub_surface",
-      "target": "presentation_hub_surface_desc",
+      "target": "presentation_hub_surface_createstate",
       "relation": "defines",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
