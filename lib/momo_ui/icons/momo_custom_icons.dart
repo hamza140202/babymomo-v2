@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../mascot/momo_master_vector.dart';
 
 class MomoCustomIcons {
   // 1. Lounge: Mini Master Mochi Mascot Icon
@@ -27,9 +28,10 @@ class MomoCustomIcons {
             : null,
       ),
       child: Center(
-        child: CustomPaint(
-          size: Size(size * 0.8, size * 0.8),
-          painter: _MochiMascotPainter(isActive: isActive),
+        child: MomoMasterVector(
+          size: size * 0.85,
+          isWinking: false,
+          showBackground: false,
         ),
       ),
     );

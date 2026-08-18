@@ -9161,6 +9161,14 @@
       "_origin": "ast"
     },
     {
+      "id": "mascot_momo_master_vector_dart",
+      "label": "../mascot/momo_master_vector.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
       "id": "mascot_momo_mascot",
       "label": "momo_mascot.dart",
       "file_type": "code",
@@ -9379,6 +9387,14 @@
     {
       "id": "mascot_momo_master_vector_iswinking",
       "label": "isWinking",
+      "file_type": "code",
+      "source_file": "momo_ui/mascot/momo_master_vector.dart",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
+      "id": "mascot_momo_master_vector_showbackground",
+      "label": "showBackground",
       "file_type": "code",
       "source_file": "momo_ui/mascot/momo_master_vector.dart",
       "source_location": null,
@@ -26536,6 +26552,16 @@
       "weight": 1.0
     },
     {
+      "source": "icons_momo_custom_icons",
+      "target": "mascot_momo_master_vector_dart",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "momo_ui/icons/momo_custom_icons.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
       "source": "mascot_momo_mascot",
       "target": "mascot_momo_mascot_mascotmood",
       "relation": "defines",
@@ -26931,6 +26957,16 @@
     {
       "source": "mascot_momo_master_vector",
       "target": "mascot_momo_master_vector_iswinking",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "momo_ui/mascot/momo_master_vector.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "mascot_momo_master_vector",
+      "target": "mascot_momo_master_vector_showbackground",
       "relation": "defines",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
