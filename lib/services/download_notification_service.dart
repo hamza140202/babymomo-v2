@@ -33,8 +33,6 @@ class DownloadNotificationService {
         playSound: false,
       ),
       foregroundTaskOptions: const ForegroundTaskOptions(
-        interval: 1000,
-        isOnceEvent: false,
         autoRunOnBoot: false,
         allowWakeLock: true,
         allowWifiLock: true,
@@ -57,7 +55,6 @@ class DownloadNotificationService {
           channelName,
           description: channelDesc,
           importance: Importance.max,
-          priority: Priority.max,
           playSound: false,
           enableVibration: false,
           showBadge: true,
