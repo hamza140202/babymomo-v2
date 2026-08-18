@@ -1,9 +1,8 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../features/shell/navigation_shell.dart';
-import 'momo_ui/mascot/momo_master_vector.dart';
+import '../shell/navigation_shell.dart';
+import '../../momo_ui/mascot/momo_master_vector.dart';
 
 class MomoWinkSplashScreen extends StatefulWidget {
   const MomoWinkSplashScreen({super.key});
@@ -51,7 +50,7 @@ class _MomoWinkSplashScreenState extends State<MomoWinkSplashScreen>
 
     _controller.forward();
 
-    // After animation finishes in ~2.5s, transition smoothly to NavigationShell
+    // After animation finishes in ~2.4s, transition smoothly to NavigationShell
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         Get.off(
@@ -76,7 +75,7 @@ class _MomoWinkSplashScreenState extends State<MomoWinkSplashScreen>
       body: Stack(
         alignment: Alignment.center,
         children: [
-          // 1. Ambient Background Glow Aura (as in preview_wink_splash.html)
+          // 1. Ambient Background Glow Aura
           Container(
             width: 280,
             height: 280,
