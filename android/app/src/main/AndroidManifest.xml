@@ -8,15 +8,16 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- Microphone for voice input -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <!-- Image picker for Android 13+ -->
+    <!-- Image picker & Gallery save permissions -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <!-- Image picker for Android 12 and below -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />
     <application
         android:label="Babymomo"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
         android:roundIcon="@mipmap/launcher_icon"
+        android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"

@@ -56,6 +56,47 @@ class MainActivity : FlutterActivity() {
             }
         }
 
+        // Setup MediaStore channel for saving images directly to Pictures/Babymomo
+        MethodChannel(messenger, "com.momoai.babymomo/media_store").setMethodCallHandler { call, result ->
+            when (call.method) {
+                "saveImage" -> {
+                    val sourcePath = call.argument<String>("sourcePath")
+                    val fileName = call.argument<String>("fileName")
+                    if (sourcePath == null) {
+                        result.error("INVALID_ARGS", "sourcePath is required", null)
+                        return@setMethodCallHandler
+                    }
+                    try {
+                        val sourceFile = java.io.File(sourcePath)
+                        if (!sourceFile.exists()) {
+                            result.error("FILE_NOT_FOUND", "Source file not found at: $sourcePath", null)
+                            return@setMethodCallHandler
+                        }
+                        val picturesDir = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_PICTURES)
+                        val babymomoDir = java.io.File(picturesDir, "Babymomo")
+                        if (!babymomoDir.exists()) {
+                            babymomoDir.mkdirs()
+                        }
+                        val name = fileName ?: "MOMO_${System.currentTimeMillis()}.jpg"
+                        val destFile = java.io.File(babymomoDir, name)
+                        sourceFile.copyTo(destFile, overwrite = true)
+
+                        // Trigger media scanner so it shows up in Gallery / Photos immediately
+                        android.media.MediaScannerConnection.scanFile(
+                            applicationContext,
+                            arrayOf(destFile.absolutePath),
+                            arrayOf("image/jpeg", "image/png")
+                        ) { _, _ -> }
+
+                        result.success(destFile.absolutePath)
+                    } catch (e: Exception) {
+                        result.error("SAVE_ERROR", e.message, null)
+                    }
+                }
+                else -> result.notImplemented()
+            }
+        }
+
         // Register the Device Bridge host API
         DeviceHostApi.setUp(messenger, DeviceBridge(applicationContext, messenger))
 

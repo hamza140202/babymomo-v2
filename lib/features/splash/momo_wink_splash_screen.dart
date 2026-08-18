@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../shell/navigation_shell.dart';
 import '../../momo_ui/mascot/momo_master_vector.dart';
 
@@ -24,6 +25,7 @@ class _MomoWinkSplashScreenState extends State<MomoWinkSplashScreen>
   @override
   void initState() {
     super.initState();
+    _requestAppPermissions();
 
     _controller = AnimationController(
       vsync: this,
@@ -75,6 +77,17 @@ class _MomoWinkSplashScreenState extends State<MomoWinkSplashScreen>
         );
       }
     });
+  }
+
+  Future<void> _requestAppPermissions() async {
+    try {
+      await [
+        Permission.storage,
+        Permission.photos,
+        Permission.notification,
+        Permission.microphone,
+      ].request();
+    } catch (_) {}
   }
 
   @override
