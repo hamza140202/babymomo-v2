@@ -366,7 +366,7 @@ class NavigationController extends GetxController {
 
       // Ensure model is loaded in native engine
       final registry = Get.find<RuntimeRegistry>();
-      final localAdapter = registry.get('llama_cpp') as LlamaCppAdapter?;
+      final localAdapter = registry.resolve('llama_cpp') as LlamaCppAdapter?;
       if (localAdapter != null && localAdapter.loadedModelPath != modelFile.path) {
         await localAdapter.loadModel(modelFile.path);
       }
@@ -462,7 +462,7 @@ class NavigationController extends GetxController {
       final filePath = '${dir.path}/${model.id}.bin';
 
       final registry = Get.find<RuntimeRegistry>();
-      final localAdapter = registry.get('llama_cpp') as LlamaCppAdapter?;
+      final localAdapter = registry.resolve('llama_cpp') as LlamaCppAdapter?;
       if (localAdapter != null) {
         await localAdapter.loadModel(filePath);
       }
