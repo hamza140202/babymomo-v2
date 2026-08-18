@@ -1,0 +1,427 @@
+{
+  "app.dart": {
+    "mtime": 1779362871.3547015,
+    "ast_hash": "75a53fe42a8686c70ce97d2577cad86e",
+    "semantic_hash": "75a53fe42a8686c70ce97d2577cad86e"
+  },
+  "di/bindings.dart": {
+    "mtime": 1779282952.0594683,
+    "ast_hash": "18353d024db865d4332757b76cdcdf4c",
+    "semantic_hash": "18353d024db865d4332757b76cdcdf4c"
+  },
+  "features/chat/chat_binding.dart": {
+    "mtime": 1779164367.211218,
+    "ast_hash": "628c4785e9d9472200fe83d936546151",
+    "semantic_hash": "628c4785e9d9472200fe83d936546151"
+  },
+  "features/chat/chat_controller.dart": {
+    "mtime": 1779259925.6267762,
+    "ast_hash": "f16604b1c59bb1cb0ac8ef6894470e3e",
+    "semantic_hash": "f16604b1c59bb1cb0ac8ef6894470e3e"
+  },
+  "features/chat/chat_page.dart": {
+    "mtime": 1779368208.8279245,
+    "ast_hash": "2d824afdac3c746991cbc2235b99e4c3",
+    "semantic_hash": "2d824afdac3c746991cbc2235b99e4c3"
+  },
+  "features/chat/engine/momo_chat_engine.dart": {
+    "mtime": 1787038548.183071,
+    "ast_hash": "8e3b05da3e5e549d01aded7ca71a5f98",
+    "semantic_hash": "8e3b05da3e5e549d01aded7ca71a5f98"
+  },
+  "features/chat/presentation/chat_surface.dart": {
+    "mtime": 1787038681.3293593,
+    "ast_hash": "c499950255492c46625dfea376ebdb27",
+    "semantic_hash": "c499950255492c46625dfea376ebdb27"
+  },
+  "features/home/home_binding.dart": {
+    "mtime": 1779362876.3207252,
+    "ast_hash": "93d002040b5a2b9e5db920b9caf48f89",
+    "semantic_hash": "93d002040b5a2b9e5db920b9caf48f89"
+  },
+  "features/home/home_controller.dart": {
+    "mtime": 1779362878.8151104,
+    "ast_hash": "997691b8f9219416423e50c52c642322",
+    "semantic_hash": "997691b8f9219416423e50c52c642322"
+  },
+  "features/home/home_page.dart": {
+    "mtime": 1779368153.8953817,
+    "ast_hash": "89615ace6ce4b6501930504ccdadb90e",
+    "semantic_hash": "89615ace6ce4b6501930504ccdadb90e"
+  },
+  "features/image_gen/presentation/image_gen_binding.dart": {
+    "mtime": 1779282954.3573356,
+    "ast_hash": "4e7e57b82c257a4236f582afb35179af",
+    "semantic_hash": "4e7e57b82c257a4236f582afb35179af"
+  },
+  "features/image_gen/presentation/image_gen_controller.dart": {
+    "mtime": 1779250000.1323185,
+    "ast_hash": "19a55e71c865e1543cfa448b1f348085",
+    "semantic_hash": "19a55e71c865e1543cfa448b1f348085"
+  },
+  "features/image_gen/presentation/image_gen_page.dart": {
+    "mtime": 1779368179.7345178,
+    "ast_hash": "134d8187d6aa0f97e21bf24ae1021848",
+    "semantic_hash": "134d8187d6aa0f97e21bf24ae1021848"
+  },
+  "features/image_gen/sd_models/sd_model.dart": {
+    "mtime": 1779281853.9799352,
+    "ast_hash": "b76e85b0d7405c979d8306231f74842f",
+    "semantic_hash": "b76e85b0d7405c979d8306231f74842f"
+  },
+  "features/image_gen/sd_models/sd_model_controller.dart": {
+    "mtime": 1779368580.1264734,
+    "ast_hash": "63417034da9195b165769077780312ad",
+    "semantic_hash": "63417034da9195b165769077780312ad"
+  },
+  "features/image_gen/sd_models/sd_model_repository.dart": {
+    "mtime": 1779369009.8043995,
+    "ast_hash": "0c47c1812e82cd8328a5e3aef5717b8d",
+    "semantic_hash": "0c47c1812e82cd8328a5e3aef5717b8d"
+  },
+  "features/image_gen/sd_models/sd_models_sheet.dart": {
+    "mtime": 1779368582.3243444,
+    "ast_hash": "356718be7b66bafe3ffa276b0b2c1508",
+    "semantic_hash": "356718be7b66bafe3ffa276b0b2c1508"
+  },
+  "features/image_gen/sd_models/sd_runtime_manager.dart": {
+    "mtime": 1779370832.8346076,
+    "ast_hash": "75f854950290d17608a2a00b5532929d",
+    "semantic_hash": "75f854950290d17608a2a00b5532929d"
+  },
+  "features/lounge/presentation/lounge_surface.dart": {
+    "mtime": 1787038640.1288345,
+    "ast_hash": "c38130af018c798136f9bdc0a6b74e7b",
+    "semantic_hash": "c38130af018c798136f9bdc0a6b74e7b"
+  },
+  "features/model_hub/models/app_model_item.dart": {
+    "mtime": 1787038498.0678337,
+    "ast_hash": "34a93e1aba5becad674220b0ea36975b",
+    "semantic_hash": "34a93e1aba5becad674220b0ea36975b"
+  },
+  "features/model_hub/presentation/hub_surface.dart": {
+    "mtime": 1787038797.599648,
+    "ast_hash": "3ea716159c2c82d7ec36a935eb9613c6",
+    "semantic_hash": "3ea716159c2c82d7ec36a935eb9613c6"
+  },
+  "features/model_hub/presentation/model_hub_binding.dart": {
+    "mtime": 1779362885.097292,
+    "ast_hash": "7eff7df095e3287d904a04f1a75b07f2",
+    "semantic_hash": "7eff7df095e3287d904a04f1a75b07f2"
+  },
+  "features/model_hub/presentation/model_hub_controller.dart": {
+    "mtime": 1787029696.247483,
+    "ast_hash": "f3a2048e68150417c598f5c5d0567d77",
+    "semantic_hash": "f3a2048e68150417c598f5c5d0567d77"
+  },
+  "features/model_hub/presentation/model_hub_page.dart": {
+    "mtime": 1779368241.8833416,
+    "ast_hash": "ef6d6d49e67c617d730e8e66a9930e72",
+    "semantic_hash": "ef6d6d49e67c617d730e8e66a9930e72"
+  },
+  "features/model_hub/presentation/widgets/model_card.dart": {
+    "mtime": 1787039446.804934,
+    "ast_hash": "01d7ce46171b192a66f46851e56c4852",
+    "semantic_hash": "01d7ce46171b192a66f46851e56c4852"
+  },
+  "features/onboarding/presentation/splash_binding.dart": {
+    "mtime": 1779257165.847364,
+    "ast_hash": "7d75f215592a76d96eceba7fc82d9c04",
+    "semantic_hash": "7d75f215592a76d96eceba7fc82d9c04"
+  },
+  "features/onboarding/presentation/splash_controller.dart": {
+    "mtime": 1779257236.2366765,
+    "ast_hash": "55536dfbab435c4fd5fb703ca9453512",
+    "semantic_hash": "55536dfbab435c4fd5fb703ca9453512"
+  },
+  "features/onboarding/presentation/splash_page.dart": {
+    "mtime": 1779362351.4519892,
+    "ast_hash": "7254ba756ca7595e6602406c459c309e",
+    "semantic_hash": "7254ba756ca7595e6602406c459c309e"
+  },
+  "features/settings/presentation/settings_binding.dart": {
+    "mtime": 1779257130.071626,
+    "ast_hash": "b0c714c66aa12de12d604b6f42cefb08",
+    "semantic_hash": "b0c714c66aa12de12d604b6f42cefb08"
+  },
+  "features/settings/presentation/settings_controller.dart": {
+    "mtime": 1779283254.7552953,
+    "ast_hash": "fef3a5d0cd30c6c3563b6dbabc81d9b1",
+    "semantic_hash": "fef3a5d0cd30c6c3563b6dbabc81d9b1"
+  },
+  "features/settings/presentation/settings_page.dart": {
+    "mtime": 1779368229.3417754,
+    "ast_hash": "dfdf476266798e080e2af9ee7529d184",
+    "semantic_hash": "dfdf476266798e080e2af9ee7529d184"
+  },
+  "features/shell/navigation_controller.dart": {
+    "mtime": 1787039405.8011277,
+    "ast_hash": "055b8eb15d0bfb35ddd7a360be1cccdf",
+    "semantic_hash": "055b8eb15d0bfb35ddd7a360be1cccdf"
+  },
+  "features/shell/navigation_shell.dart": {
+    "mtime": 1787038833.3045347,
+    "ast_hash": "5ccf1a98eaee653abde0bb8c7f529c60",
+    "semantic_hash": "5ccf1a98eaee653abde0bb8c7f529c60"
+  },
+  "features/splash/momo_wink_splash_screen.dart": {
+    "mtime": 1787033759.8323228,
+    "ast_hash": "a5ec59559f665a08760f3d7d6e63a304",
+    "semantic_hash": "a5ec59559f665a08760f3d7d6e63a304"
+  },
+  "features/studio/presentation/studio_surface.dart": {
+    "mtime": 1787039480.0671382,
+    "ast_hash": "e5ea1dee1b3b49a50464ebe03dc5b267",
+    "semantic_hash": "e5ea1dee1b3b49a50464ebe03dc5b267"
+  },
+  "main.dart": {
+    "mtime": 1787033236.695583,
+    "ast_hash": "5665cf61d98addbeaaff379e55a55c59",
+    "semantic_hash": "5665cf61d98addbeaaff379e55a55c59"
+  },
+  "momo_core/agent/agent_loop.dart": {
+    "mtime": 1779250010.1844947,
+    "ast_hash": "c9c3ac9cc8d7a825c84886c9950313cf",
+    "semantic_hash": "c9c3ac9cc8d7a825c84886c9950313cf"
+  },
+  "momo_core/agent/core_tools.dart": {
+    "mtime": 1779249799.2016687,
+    "ast_hash": "6188d486fdc84661a64a2f621ebc7873",
+    "semantic_hash": "6188d486fdc84661a64a2f621ebc7873"
+  },
+  "momo_core/agent/momo_tool.dart": {
+    "mtime": 1779249782.9130025,
+    "ast_hash": "58a2b29afe59f84208a4cb73380fbf60",
+    "semantic_hash": "58a2b29afe59f84208a4cb73380fbf60"
+  },
+  "momo_core/bridge/device_api.g.dart": {
+    "mtime": 1779253465.966372,
+    "ast_hash": "dd6a0e8b8aabe9fe1e40e64bdcf2e583",
+    "semantic_hash": "dd6a0e8b8aabe9fe1e40e64bdcf2e583"
+  },
+  "momo_core/bridge/image_gen_api.g.dart": {
+    "mtime": 1779253481.6529782,
+    "ast_hash": "02e3c45c355caac2e7566c7aad54a121",
+    "semantic_hash": "02e3c45c355caac2e7566c7aad54a121"
+  },
+  "momo_core/bridge/inference_api.g.dart": {
+    "mtime": 1779253497.0271997,
+    "ast_hash": "e2ef24aa71d0f086b718dce569bbb143",
+    "semantic_hash": "e2ef24aa71d0f086b718dce569bbb143"
+  },
+  "momo_core/bridge/security_api.g.dart": {
+    "mtime": 1779253513.1643198,
+    "ast_hash": "e66c632385a74d73067912efdaa853b2",
+    "semantic_hash": "e66c632385a74d73067912efdaa853b2"
+  },
+  "momo_core/device/device_engine.dart": {
+    "mtime": 1779260215.6049309,
+    "ast_hash": "9d17562f91995bba3523740de7c5a264",
+    "semantic_hash": "9d17562f91995bba3523740de7c5a264"
+  },
+  "momo_core/device/device_profile.dart": {
+    "mtime": 1779162559.846134,
+    "ast_hash": "512a8e9e106795a87107546fd6a220c1",
+    "semantic_hash": "512a8e9e106795a87107546fd6a220c1"
+  },
+  "momo_core/device/performance_tier.dart": {
+    "mtime": 1779162937.6401658,
+    "ast_hash": "e784197627907b3bd80a3466062cdf6b",
+    "semantic_hash": "e784197627907b3bd80a3466062cdf6b"
+  },
+  "momo_core/download/download_engine.dart": {
+    "mtime": 1779259726.6977692,
+    "ast_hash": "f64948a170cafc88489c8ddb75d9b392",
+    "semantic_hash": "f64948a170cafc88489c8ddb75d9b392"
+  },
+  "momo_core/inference/inference_policy.dart": {
+    "mtime": 1779259785.8913157,
+    "ast_hash": "abeb447a7efd68cc389bb9517cdcf1fd",
+    "semantic_hash": "abeb447a7efd68cc389bb9517cdcf1fd"
+  },
+  "momo_core/inference/inference_request.dart": {
+    "mtime": 1779249738.808561,
+    "ast_hash": "9711825dbd451e5769390c5c1b218f03",
+    "semantic_hash": "9711825dbd451e5769390c5c1b218f03"
+  },
+  "momo_core/inference/inference_result.dart": {
+    "mtime": 1779162508.813406,
+    "ast_hash": "64ba9740df4bb2b27ab7356bbdce1618",
+    "semantic_hash": "64ba9740df4bb2b27ab7356bbdce1618"
+  },
+  "momo_core/inference/inference_router.dart": {
+    "mtime": 1779162536.7116265,
+    "ast_hash": "0d175336a17f252c6e9976492441f9e8",
+    "semantic_hash": "0d175336a17f252c6e9976492441f9e8"
+  },
+  "momo_core/memory/memory_engine.dart": {
+    "mtime": 1779162751.010998,
+    "ast_hash": "2ebeb3aee1f0b06b95a19a4d9c0d5823",
+    "semantic_hash": "2ebeb3aee1f0b06b95a19a4d9c0d5823"
+  },
+  "momo_core/memory/models/memory_entry.dart": {
+    "mtime": 1779162760.948642,
+    "ast_hash": "e6f8ac2acb8472b921336e240afc5850",
+    "semantic_hash": "e6f8ac2acb8472b921336e240afc5850"
+  },
+  "momo_core/momo_core.dart": {
+    "mtime": 1779249820.4990926,
+    "ast_hash": "b9bda23ffd843ec6b7a4d0dce7f27f6f",
+    "semantic_hash": "b9bda23ffd843ec6b7a4d0dce7f27f6f"
+  },
+  "momo_core/multimodal/modality.dart": {
+    "mtime": 1779162510.851468,
+    "ast_hash": "d29f0ad572c89dc90503638eed2ea285",
+    "semantic_hash": "d29f0ad572c89dc90503638eed2ea285"
+  },
+  "momo_core/plugin/plugin_interface.dart": {
+    "mtime": 1779249811.9411883,
+    "ast_hash": "dd9636d5eb54f90b911ee66801692ff3",
+    "semantic_hash": "dd9636d5eb54f90b911ee66801692ff3"
+  },
+  "momo_core/plugin/plugin_manager.dart": {
+    "mtime": 1779162621.1141887,
+    "ast_hash": "b646f661c7202c7c1d07763a227a45ea",
+    "semantic_hash": "b646f661c7202c7c1d07763a227a45ea"
+  },
+  "momo_core/runtime/adapters/cloud_adapter.dart": {
+    "mtime": 1779164252.842059,
+    "ast_hash": "e88a1c02f00d8f6323ce97dc14cdc92e",
+    "semantic_hash": "e88a1c02f00d8f6323ce97dc14cdc92e"
+  },
+  "momo_core/runtime/adapters/cloud_provider_config.dart": {
+    "mtime": 1779164254.8646116,
+    "ast_hash": "bd665d2c4de93d9a06a0214aae6e7f9d",
+    "semantic_hash": "bd665d2c4de93d9a06a0214aae6e7f9d"
+  },
+  "momo_core/runtime/adapters/litert_adapter.dart": {
+    "mtime": 1779163831.7104552,
+    "ast_hash": "dcfc4599582344210098b13badb53844",
+    "semantic_hash": "dcfc4599582344210098b13badb53844"
+  },
+  "momo_core/runtime/adapters/llama_cpp_adapter.dart": {
+    "mtime": 1779249097.1511207,
+    "ast_hash": "f15adaf0d81214f13ab66999da0ba1d4",
+    "semantic_hash": "f15adaf0d81214f13ab66999da0ba1d4"
+  },
+  "momo_core/runtime/adapters/stable_diffusion_adapter.dart": {
+    "mtime": 1779249724.5079694,
+    "ast_hash": "0259ea9420413abb676888ffd43b321e",
+    "semantic_hash": "0259ea9420413abb676888ffd43b321e"
+  },
+  "momo_core/runtime/capability.dart": {
+    "mtime": 1779162446.5635972,
+    "ast_hash": "2be9d02284f7eb165193d2e4070967b0",
+    "semantic_hash": "2be9d02284f7eb165193d2e4070967b0"
+  },
+  "momo_core/runtime/runtime_config.dart": {
+    "mtime": 1779162457.2108607,
+    "ast_hash": "079a2c23232a34b9b95ab22ce6aa35c6",
+    "semantic_hash": "079a2c23232a34b9b95ab22ce6aa35c6"
+  },
+  "momo_core/runtime/runtime_engine.dart": {
+    "mtime": 1779162480.1316,
+    "ast_hash": "ef42ee3571b7b1065436942bfb809435",
+    "semantic_hash": "ef42ee3571b7b1065436942bfb809435"
+  },
+  "momo_core/runtime/runtime_registry.dart": {
+    "mtime": 1779162482.174573,
+    "ast_hash": "54e240b4bd217e813c43561b22d549d2",
+    "semantic_hash": "54e240b4bd217e813c43561b22d549d2"
+  },
+  "momo_core/security/security_engine.dart": {
+    "mtime": 1779283276.6148734,
+    "ast_hash": "45393731037b1e9a8573c8314deeaff3",
+    "semantic_hash": "45393731037b1e9a8573c8314deeaff3"
+  },
+  "momo_core/storage/hive_storage_impl.dart": {
+    "mtime": 1779251051.6403334,
+    "ast_hash": "a8497a879a5ac494d97f5049c475289a",
+    "semantic_hash": "a8497a879a5ac494d97f5049c475289a"
+  },
+  "momo_core/storage/storage_service.dart": {
+    "mtime": 1779162615.0417264,
+    "ast_hash": "8c9a21b414a0cd1de61f5e8994359a60",
+    "semantic_hash": "8c9a21b414a0cd1de61f5e8994359a60"
+  },
+  "momo_ui/buttons/momo_button.dart": {
+    "mtime": 1787026561.7329519,
+    "ast_hash": "60df202ce5366ece8c6480e0209847cb",
+    "semantic_hash": "60df202ce5366ece8c6480e0209847cb"
+  },
+  "momo_ui/cards/ai_card.dart": {
+    "mtime": 1779163887.6398003,
+    "ast_hash": "79e49eaa0992c41c842cd37fc403a933",
+    "semantic_hash": "79e49eaa0992c41c842cd37fc403a933"
+  },
+  "momo_ui/cards/momo_glass_card.dart": {
+    "mtime": 1787032027.8566005,
+    "ast_hash": "e5334562b185a927f9ffc2b1fa173cf2",
+    "semantic_hash": "e5334562b185a927f9ffc2b1fa173cf2"
+  },
+  "momo_ui/icons/momo_custom_icons.dart": {
+    "mtime": 1787033273.7645795,
+    "ast_hash": "9665cc673997c5964e441a1ec9297f54",
+    "semantic_hash": "9665cc673997c5964e441a1ec9297f54"
+  },
+  "momo_ui/mascot/momo_mascot.dart": {
+    "mtime": 1787031990.7868335,
+    "ast_hash": "066810343aab0d75eb5ed5dd445470ba",
+    "semantic_hash": "066810343aab0d75eb5ed5dd445470ba"
+  },
+  "momo_ui/mascot/momo_master_vector.dart": {
+    "mtime": 1787033228.2916782,
+    "ast_hash": "faae65019ef25d84bab7b5ac26ec2fce",
+    "semantic_hash": "faae65019ef25d84bab7b5ac26ec2fce"
+  },
+  "momo_ui/momo_ui.dart": {
+    "mtime": 1779164039.1295643,
+    "ast_hash": "8dea1b912fd7e98698359d82615a7d3c",
+    "semantic_hash": "8dea1b912fd7e98698359d82615a7d3c"
+  },
+  "momo_ui/motion/motion_engine.dart": {
+    "mtime": 1779162770.1912918,
+    "ast_hash": "831ea3eb7124d71ccf2ed4fd9e8d96d3",
+    "semantic_hash": "831ea3eb7124d71ccf2ed4fd9e8d96d3"
+  },
+  "momo_ui/streaming/streaming_text.dart": {
+    "mtime": 1779163869.83227,
+    "ast_hash": "27b0e6dbe2d131d8a56bee518a64a58a",
+    "semantic_hash": "27b0e6dbe2d131d8a56bee518a64a58a"
+  },
+  "momo_ui/surfaces/prompt_surface.dart": {
+    "mtime": 1779163889.6616292,
+    "ast_hash": "19a416dd7fcf49e597e1cb243b03a563",
+    "semantic_hash": "19a416dd7fcf49e597e1cb243b03a563"
+  },
+  "momo_ui/theme/momo_colors.dart": {
+    "mtime": 1779162647.446557,
+    "ast_hash": "a5187b86acd453d3cd20df230c2f135a",
+    "semantic_hash": "a5187b86acd453d3cd20df230c2f135a"
+  },
+  "momo_ui/theme/momo_theme.dart": {
+    "mtime": 1787030481.0986652,
+    "ast_hash": "aa36cb8ba7d144ef75fd1edfdf997e57",
+    "semantic_hash": "aa36cb8ba7d144ef75fd1edfdf997e57"
+  },
+  "momo_ui/theme/momo_typography.dart": {
+    "mtime": 1779162659.1573591,
+    "ast_hash": "09843ae6b21a84c4df57da5eebf8b26e",
+    "semantic_hash": "09843ae6b21a84c4df57da5eebf8b26e"
+  },
+  "routes/app_pages.dart": {
+    "mtime": 1779362887.88941,
+    "ast_hash": "78e14b23d574fd9946b2ecdb0c44293c",
+    "semantic_hash": "78e14b23d574fd9946b2ecdb0c44293c"
+  },
+  "routes/app_routes.dart": {
+    "mtime": 1779362889.6923301,
+    "ast_hash": "ec2844912696df157d3d0a10d551b6db",
+    "semantic_hash": "ec2844912696df157d3d0a10d551b6db"
+  },
+  "services/download_notification_service.dart": {
+    "mtime": 1787038463.4844072,
+    "ast_hash": "cbb21a725dd4c3ff21b94c4d6748ee3b",
+    "semantic_hash": "cbb21a725dd4c3ff21b94c4d6748ee3b"
+  }
+}

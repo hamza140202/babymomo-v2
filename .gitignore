@@ -24,3 +24,9 @@ sd_native/local_server/*.so
 # OS
 .DS_Store
 Thumbs.db
+
+# Node Build Helpers
+node_modules/
+package.json
+package-lock.json
+render_icon.js
