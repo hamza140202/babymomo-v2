@@ -686,19 +686,66 @@ class _StudioSurfaceState extends State<StudioSurface> {
               ),
             const SizedBox(height: 16),
 
-            // ── Prompt Input ──
+            // ── Prompt Input Card with Magic Polish Button ──
             MomoGlassCard(
-              child: TextField(
-                controller: _promptCtrl,
-                maxLines: 2,
-                style: const TextStyle(color: Colors.white, fontSize: 14),
-                decoration: const InputDecoration(
-                  hintText:
-                      'Describe your artwork idea (e.g. A cute space cat on the moon)...',
-                  hintStyle:
-                      TextStyle(color: MomoColors.textMuted, fontSize: 13),
-                  border: InputBorder.none,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _promptCtrl,
+                          maxLines: 2,
+                          style: const TextStyle(color: Colors.white, fontSize: 14),
+                          decoration: const InputDecoration(
+                            hintText:
+                                'Describe your artwork idea (e.g. A cute space cat on the moon)...',
+                            hintStyle:
+                                TextStyle(color: MomoColors.textMuted, fontSize: 13),
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: 'Polish with Magic Lighting',
+                        icon: const Icon(Icons.auto_awesome,
+                            color: MomoColors.rose, size: 20),
+                        onPressed: () {
+                          final current = _promptCtrl.text.trim();
+                          if (current.isNotEmpty) {
+                            _promptCtrl.text =
+                                '$current, dramatic volumetric lighting, intricate octane rendering, masterpiece, sharp focus, 8k uhd';
+                            _promptCtrl.selection = TextSelection.fromPosition(
+                              TextPosition(offset: _promptCtrl.text.length),
+                            );
+                            Get.snackbar(
+                              '✨ Prompt Polished!',
+                              'Added cinematic lighting and texture enhancements.',
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: MomoColors.surfaceLight,
+                              colorText: Colors.white,
+                              duration: const Duration(seconds: 2),
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  // Quick Inspiration Prompt Chips
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        _buildStudioPromptChip('🐱 Cyberpunk Kitten', 'A futuristic cybernetic fluffy kitten in neon Tokyo street'),
+                        _buildStudioPromptChip('🏰 Floating Island', 'A majestic fairytale castle floating in sky with waterfalls at sunset'),
+                        _buildStudioPromptChip('🪐 Astronaut', 'An astronaut resting on Saturn rings looking at glowing galaxy'),
+                        _buildStudioPromptChip('🌸 Cherry Blossom Tea', 'A cozy Japanese wooden tea room surrounded by blooming cherry blossoms'),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 14),
@@ -1052,6 +1099,34 @@ class _StudioSurfaceState extends State<StudioSurface> {
           style: const TextStyle(color: MomoColors.textMuted, fontSize: 11),
         ),
       ],
+    );
+  }
+
+  Widget _buildStudioPromptChip(String label, String fullPrompt) {
+    return GestureDetector(
+      onTap: () {
+        _promptCtrl.text = fullPrompt;
+        _promptCtrl.selection = TextSelection.fromPosition(
+          TextPosition(offset: _promptCtrl.text.length),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: MomoColors.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: MomoColors.glassBorder),
+        ),
+        child: Text(
+          label,
+          style: const TextStyle(
+            color: MomoColors.textSecondary,
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
     );
   }
 }

@@ -231,6 +231,31 @@ class _ChatSurfaceState extends State<ChatSurface> {
             child: Obx(() {
               _scrollToBottom();
               final messages = _ctrl.chatMessages;
+              if (messages.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.chat_bubble_outline,
+                          size: 48, color: MomoColors.primary),
+                      const SizedBox(height: 12),
+                      const Text(
+                        'Start a conversation with Babymomo',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 6),
+                      const Text(
+                        'Ask questions, brainstorm, or attach an image for vision AI',
+                        style: TextStyle(
+                            color: MomoColors.textMuted, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                );
+              }
               return ListView.builder(
                 controller: _scrollCtrl,
                 padding:
@@ -244,52 +269,68 @@ class _ChatSurfaceState extends State<ChatSurface> {
                   return Align(
                     alignment:
                         isUser ? Alignment.centerRight : Alignment.centerLeft,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 5),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                      constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width * 0.82),
-                      decoration: BoxDecoration(
-                        color: isUser
-                            ? MomoColors.primary
-                            : MomoColors.surfaceLight,
-                        borderRadius: BorderRadius.only(
-                          topLeft: const Radius.circular(16),
-                          topRight: const Radius.circular(16),
-                          bottomLeft: Radius.circular(isUser ? 16 : 4),
-                          bottomRight: Radius.circular(isUser ? 4 : 16),
+                    child: GestureDetector(
+                      onLongPress: () {
+                        final text = msg['content'] ?? '';
+                        if (text.isNotEmpty && text != '__typing__') {
+                          Clipboard.setData(ClipboardData(text: text));
+                          Get.snackbar(
+                            '📋 Copied to Clipboard',
+                            'Message text copied.',
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: MomoColors.surfaceLight,
+                            colorText: Colors.white,
+                            duration: const Duration(seconds: 2),
+                          );
+                        }
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * 0.82),
+                        decoration: BoxDecoration(
+                          color: isUser
+                              ? MomoColors.primary
+                              : MomoColors.surfaceLight,
+                          borderRadius: BorderRadius.only(
+                            topLeft: const Radius.circular(16),
+                            topRight: const Radius.circular(16),
+                            bottomLeft: Radius.circular(isUser ? 16 : 4),
+                            bottomRight: Radius.circular(isUser ? 4 : 16),
+                          ),
+                          border: Border.all(color: MomoColors.glassBorder),
                         ),
-                        border: Border.all(color: MomoColors.glassBorder),
-                      ),
-                      child: isTypingPlaceholder
-                          ? const _TypingDots()
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (msg['image'] != null) ...[
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Image.file(
-                                      File(msg['image']!),
-                                      height: 160,
-                                      width: double.infinity,
-                                      fit: BoxFit.cover,
+                        child: isTypingPlaceholder
+                            ? const _TypingDots()
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (msg['image'] != null) ...[
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image.file(
+                                        File(msg['image']!),
+                                        height: 160,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                  ],
+                                  Text(
+                                    msg['content'] ?? '',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      height: 1.5,
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
                                 ],
-                                Text(
-                                  msg['content'] ?? '',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    height: 1.5,
-                                  ),
-                                ),
-                              ],
-                            ),
-                    ).animate().fadeIn(duration: 250.ms).slideY(begin: 0.06),
+                              ),
+                      ).animate().fadeIn(duration: 250.ms).slideY(begin: 0.06),
+                    ),
                   );
                 },
               );
@@ -414,6 +455,34 @@ class _ChatSurfaceState extends State<ChatSurface> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPromptChip(String label, String fullPrompt) {
+    return GestureDetector(
+      onTap: () {
+        _textCtrl.text = fullPrompt;
+        _textCtrl.selection = TextSelection.fromPosition(
+          TextPosition(offset: _textCtrl.text.length),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: MomoColors.surfaceLight,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: MomoColors.glassBorder),
+        ),
+        child: Text(
+          label,
+          style: const TextStyle(
+            color: MomoColors.textSecondary,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     );
   }

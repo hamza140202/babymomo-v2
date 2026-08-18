@@ -16,10 +16,31 @@ class HubSurface extends StatefulWidget {
 class _HubSurfaceState extends State<HubSurface> {
   int _selectedFilter = 0;
   final _filters = ['All', '🧠 Brains', '👁️ Vision AI', '🎨 Studio'];
+  final _searchCtrl = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<NavigationController>();
+
+    final filteredModels = controller.allModels.where((m) {
+      if (_selectedFilter == 1 && m.type != 'Text LLM') return false;
+      if (_selectedFilter == 2 && !(m.type == 'Vision AI' || m.isVision)) return false;
+      if (_selectedFilter == 3 && m.type != 'Image Diffusion') return false;
+      if (_searchQuery.isNotEmpty) {
+        final q = _searchQuery.toLowerCase();
+        return m.name.toLowerCase().contains(q) ||
+            m.description.toLowerCase().contains(q) ||
+            m.type.toLowerCase().contains(q);
+      }
+      return true;
+    }).toList();
 
     return SafeArea(
       child: ListView(
@@ -51,7 +72,39 @@ class _HubSurfaceState extends State<HubSurface> {
                   ),
                 ]),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
+
+          // ── Search Bar ──
+          Container(
+            decoration: BoxDecoration(
+              color: MomoColors.surfaceLight,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: MomoColors.glassBorder),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+            child: TextField(
+              controller: _searchCtrl,
+              onChanged: (v) => setState(() => _searchQuery = v.trim()),
+              style: const TextStyle(color: Colors.white, fontSize: 13),
+              decoration: InputDecoration(
+                icon: const Icon(Icons.search, size: 18, color: MomoColors.textMuted),
+                hintText: 'Search models (e.g. Qwen, Vision, DeepSeek)...',
+                hintStyle: const TextStyle(color: MomoColors.textMuted, fontSize: 13),
+                border: InputBorder.none,
+                isDense: true,
+                suffixIcon: _searchQuery.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, size: 16, color: MomoColors.textMuted),
+                        onPressed: () {
+                          _searchCtrl.clear();
+                          setState(() => _searchQuery = '');
+                        },
+                      )
+                    : null,
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
 
           // ── Category Filter Tabs ──
           SizedBox(
@@ -91,17 +144,24 @@ class _HubSurfaceState extends State<HubSurface> {
           ),
           const SizedBox(height: 16),
 
-          Text('Available Models',
+          Text('Available Models (${filteredModels.length})',
               style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 12),
 
-          // ── Model List with Filter ──
-          ...controller.allModels.where((m) {
-            if (_selectedFilter == 1) return m.type == 'Text LLM';
-            if (_selectedFilter == 2) return m.type == 'Vision AI' || m.isVision;
-            if (_selectedFilter == 3) return m.type == 'Image Diffusion';
-            return true;
-          }).map((m) => ModelCard(model: m, controller: controller)),
+          // ── Model List with Filter & Search ──
+          if (filteredModels.isEmpty)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 32),
+              child: Center(
+                child: Text(
+                  'No matching AI models found.',
+                  style: TextStyle(color: MomoColors.textMuted, fontSize: 13),
+                ),
+              ),
+            )
+          else
+            ...filteredModels
+                .map((m) => ModelCard(model: m, controller: controller)),
 
           const SizedBox(height: 24),
           Text('System & Information',
