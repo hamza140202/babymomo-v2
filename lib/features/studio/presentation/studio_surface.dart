@@ -37,6 +37,10 @@ class _StudioSurfaceState extends State<StudioSurface> {
     '🧸 Pastel Mochi',
   ];
 
+  // Comprehensive negative prompt to eliminate low quality, artifacts, watermarks, and distortion
+  static const String standardNegativePrompt =
+      'low quality, worst quality, low resolution, blurry, out of focus, excessive noise, compression artifacts, JPEG artifacts, pixelation, oversharpening, excessive sharpening halos, chromatic aberration, banding, posterization, muddy details, washed-out colors, crushed blacks, blown highlights, flat lighting, inconsistent lighting, unrealistic shadows, incorrect reflections, bad perspective, distorted perspective, fisheye distortion unless explicitly requested, warped geometry, malformed objects, duplicated objects, floating objects, disconnected objects, impossible physics, inconsistent scale, incorrect proportions, poor composition, cluttered composition, distracting background, random objects, visual noise, accidental tangencies, awkward cropping, excessive empty space, unwanted borders, frame, watermark, logo, signature, text, captions, subtitles, UI elements, interface elements, typography, illegible writing, random letters, random numbers';
+
   // 25-second cooldown tracker for public endpoint
   static DateTime? _lastCloudGenTime;
 
@@ -359,9 +363,10 @@ class _StudioSurfaceState extends State<StudioSurface> {
       if (canUseCloud) {
         // High quality generation with automatic fallback
         try {
-          final encoded = Uri.encodeComponent(weightedPrompt);
+          final encodedPrompt = Uri.encodeComponent(weightedPrompt);
+          final encodedNegative = Uri.encodeComponent(standardNegativePrompt);
           final url =
-              'https://image.pollinations.ai/prompt/$encoded?width=768&height=768&nologo=true&seed=$seed&model=turbo';
+              'https://image.pollinations.ai/prompt/$encodedPrompt?negative=$encodedNegative&width=768&height=768&nologo=true&seed=$seed&model=turbo';
 
           final dir = await getApplicationDocumentsDirectory();
           final historyDir = Directory('${dir.path}/MOMO_Studio_History');

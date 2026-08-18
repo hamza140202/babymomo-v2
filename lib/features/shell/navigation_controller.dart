@@ -76,6 +76,9 @@ class NavigationController extends GetxController {
     model.isPaused.value = false;
     model.statusMessage.value = 'Connecting...';
 
+    // Start Android Foreground Service so download never suspends in background
+    await DownloadNotificationService.startBackgroundExecution(model.name);
+
     final dir = await getApplicationDocumentsDirectory();
     final tempPath = '${dir.path}/${model.id}.tmp';
     final finalPath = '${dir.path}/${model.id}.bin';
@@ -190,6 +193,8 @@ class NavigationController extends GetxController {
         model.statusMessage.value = 'Installed';
         model.downloadProgress.value = 1.0;
 
+        await DownloadNotificationService.stopBackgroundExecution();
+
         DownloadNotificationService.showProgress(
           id: model.notifId,
           modelName: model.name,
@@ -218,6 +223,7 @@ class NavigationController extends GetxController {
           model.isPaused.value = true;
           model.statusMessage.value =
               'Paused at ${(model.downloadProgress.value * 100).toStringAsFixed(0)}%';
+          await DownloadNotificationService.stopBackgroundExecution();
           DownloadNotificationService.showProgress(
             id: model.notifId,
             modelName: model.name,
@@ -252,6 +258,7 @@ class NavigationController extends GetxController {
     model.isDownloading.value = false;
     model.isPaused.value = true;
     model.statusMessage.value = 'Check network & tap Resume';
+    await DownloadNotificationService.stopBackgroundExecution();
     DownloadNotificationService.showProgress(
       id: model.notifId,
       modelName: model.name,
@@ -272,6 +279,7 @@ class NavigationController extends GetxController {
 
   void pauseDownload(AppModelItem model) {
     model.cancelDownload();
+    DownloadNotificationService.stopBackgroundExecution();
   }
 
   void stopDownload(AppModelItem model) async {
