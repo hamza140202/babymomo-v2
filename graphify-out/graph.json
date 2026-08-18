@@ -4057,6 +4057,22 @@
       "_origin": "ast"
     },
     {
+      "id": "presentation_studio_surface_lastcloudgentime",
+      "label": "_lastCloudGenTime",
+      "file_type": "code",
+      "source_file": "features/studio/presentation/studio_surface.dart",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
+      "id": "static_datetime",
+      "label": "static DateTime?",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
       "id": "presentation_studio_surface_isgenerating",
       "label": "_isGenerating",
       "file_type": "code",
@@ -4131,6 +4147,14 @@
     {
       "id": "presentation_studio_surface_showmodelpicker",
       "label": "_showModelPicker",
+      "file_type": "code",
+      "source_file": "features/studio/presentation/studio_surface.dart",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
+      "id": "presentation_studio_surface_buildweightedprompt",
+      "label": "_buildWeightedPrompt",
       "file_type": "code",
       "source_file": "features/studio/presentation/studio_surface.dart",
       "source_location": null,
@@ -17919,6 +17943,27 @@
     },
     {
       "source": "presentation_studio_surface",
+      "target": "presentation_studio_surface_lastcloudgentime",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "features/studio/presentation/studio_surface.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "presentation_studio_surface",
+      "target": "static_datetime",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "features/studio/presentation/studio_surface.dart",
+      "source_location": null,
+      "weight": 1.0,
+      "context": "variable_type"
+    },
+    {
+      "source": "presentation_studio_surface",
       "target": "presentation_studio_surface_isgenerating",
       "relation": "defines",
       "confidence": "EXTRACTED",
@@ -18043,6 +18088,16 @@
     {
       "source": "presentation_studio_surface",
       "target": "presentation_studio_surface_showmodelpicker",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "features/studio/presentation/studio_surface.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "presentation_studio_surface",
+      "target": "presentation_studio_surface_buildweightedprompt",
       "relation": "defines",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -18183,6 +18238,16 @@
     {
       "source": "presentation_studio_surface",
       "target": "package_get_get_dart",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "features/studio/presentation/studio_surface.dart",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "presentation_studio_surface",
+      "target": "package_dio_dio_dart",
       "relation": "imports",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
