@@ -61,7 +61,7 @@ class _MomoMascotState extends State<MomoMascot> with SingleTickerProviderStateM
   }
 
   @override
-  void dispose technical() {
+  void dispose() {
     _winkController.dispose();
     super.dispose();
   }
