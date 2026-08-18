@@ -57,6 +57,10 @@
             android:stopWithTask="false" />
 
         <meta-data
+            android:name="com.pravera.flutter_foreground_task.notification_icon"
+            android:resource="@drawable/ic_notification" />
+
+        <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
     </application>

@@ -18,7 +18,7 @@ class DownloadNotificationService {
   static int _activeDownloads = 0;
 
   static Future<void> initialize() async {
-    // 1. Initialize Foreground Task for persistent background download execution with official icon
+    // 1. Initialize Foreground Task for persistent background download execution
     FlutterForegroundTask.init(
       androidNotificationOptions: AndroidNotificationOptions(
         channelId: channelId,
@@ -29,11 +29,6 @@ class DownloadNotificationService {
         enableVibration: false,
         playSound: false,
         showWhen: true,
-        iconData: const NotificationIconData(
-          resType: ResourceType.mipmap,
-          resPrefix: ResourcePrefix.ic,
-          name: 'launcher',
-        ),
       ),
       iosNotificationOptions: const IOSNotificationOptions(
         showNotification: false,
