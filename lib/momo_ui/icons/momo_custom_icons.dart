@@ -138,43 +138,64 @@ class MomoCustomIcons {
   }
 }
 
-// Painters for crisp vector rendering
+// Painters for crisp vector rendering matching master SVG
 class _MochiMascotPainter extends CustomPainter {
   final bool isActive;
   _MochiMascotPainter({required this.isActive});
 
   @override
   void paint(Canvas canvas, Size size) {
-    final bodyPaint = Paint()
-      ..color = isActive ? Colors.white : const Color(0xFF94A3B8)
-      ..style = PaintingStyle.fill;
-    final eyePaint = Paint()
-      ..color = isActive ? const Color(0xFF18181B) : const Color(0xFF0D0E15)
-      ..style = PaintingStyle.fill;
-    final blushPaint = Paint()
-      ..color = const Color(0xFFFF4D6D).withOpacity(isActive ? 0.8 : 0.4)
-      ..style = PaintingStyle.fill;
+    final s = size.width / 512.0;
 
     // Ears
-    canvas.drawOval(Rect.fromCenter(center: Offset(size.width * 0.28, size.height * 0.22), width: size.width * 0.2, height: size.height * 0.3), bodyPaint);
-    canvas.drawOval(Rect.fromCenter(center: Offset(size.width * 0.72, size.height * 0.22), width: size.width * 0.2, height: size.height * 0.3), bodyPaint);
+    final earPaint = Paint()..color = isActive ? Colors.white : const Color(0xFF94A3B8);
+    final earInner = Paint()..color = const Color(0xFFFDA4AF);
+    
+    // Left Ear
+    canvas.save();
+    canvas.translate(178 * s, 162 * s);
+    canvas.rotate(-18 * 3.14159 / 180);
+    canvas.drawOval(Rect.fromCenter(center: Offset.zero, width: 76 * s, height: 100 * s), earPaint);
+    canvas.drawOval(Rect.fromCenter(center: Offset.zero, width: 46 * s, height: 68 * s), earInner);
+    canvas.restore();
 
-    // Head Body
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset(size.width * 0.5, size.height * 0.55), width: size.width * 0.75, height: size.height * 0.65),
-        const Radius.circular(10),
-      ),
-      bodyPaint,
-    );
+    // Right Ear
+    canvas.save();
+    canvas.translate(334 * s, 162 * s);
+    canvas.rotate(18 * 3.14159 / 180);
+    canvas.drawOval(Rect.fromCenter(center: Offset.zero, width: 76 * s, height: 100 * s), earPaint);
+    canvas.drawOval(Rect.fromCenter(center: Offset.zero, width: 46 * s, height: 68 * s), earInner);
+    canvas.restore();
+
+    // Body
+    final bodyRect = Rect.fromCenter(center: Offset(256 * s, 280 * s), width: 280 * s, height: 258 * s);
+    final bodyPaint = Paint()..color = isActive ? Colors.white : const Color(0xFF94A3B8);
+    canvas.drawOval(bodyRect, bodyPaint);
 
     // Blushes
-    canvas.drawCircle(Offset(size.width * 0.26, size.height * 0.65), size.width * 0.08, blushPaint);
-    canvas.drawCircle(Offset(size.width * 0.74, size.height * 0.65), size.width * 0.08, blushPaint);
+    final blushPaint = Paint()..color = const Color(0xFFFF4D6D).withOpacity(isActive ? 0.8 : 0.4);
+    canvas.drawCircle(Offset(175 * s, 305 * s), 28 * s, blushPaint);
+    canvas.drawCircle(Offset(337 * s, 305 * s), 28 * s, blushPaint);
 
     // Eyes
-    canvas.drawOval(Rect.fromCenter(center: Offset(size.width * 0.38, size.height * 0.52), width: 3.5, height: 5.5), eyePaint);
-    canvas.drawOval(Rect.fromCenter(center: Offset(size.width * 0.62, size.height * 0.52), width: 3.5, height: 5.5), eyePaint);
+    final eyePaint = Paint()..color = const Color(0xFF18181B);
+    final whitePaint = Paint()..color = Colors.white;
+    canvas.drawOval(Rect.fromCenter(center: Offset(205 * s, 265 * s), width: 40 * s, height: 54 * s), eyePaint);
+    canvas.drawOval(Rect.fromCenter(center: Offset(213 * s, 253 * s), width: 16 * s, height: 22 * s), whitePaint);
+
+    canvas.drawOval(Rect.fromCenter(center: Offset(307 * s, 265 * s), width: 40 * s, height: 54 * s), eyePaint);
+    canvas.drawOval(Rect.fromCenter(center: Offset(315 * s, 253 * s), width: 16 * s, height: 22 * s), whitePaint);
+
+    // Smile
+    final mouthPaint = Paint()
+      ..color = const Color(0xFF18181B)
+      ..strokeWidth = 6.0 * s
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+    final mouthPath = Path()
+      ..moveTo(242 * s, 290 * s)
+      ..quadraticBezierTo(256 * s, 306 * s, 270 * s, 290 * s);
+    canvas.drawPath(mouthPath, mouthPaint);
   }
 
   @override

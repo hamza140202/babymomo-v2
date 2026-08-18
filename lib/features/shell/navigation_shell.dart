@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../momo_ui/theme/momo_theme.dart';
 import '../../momo_ui/mascot/momo_mascot.dart';
+import '../../momo_ui/mascot/momo_master_vector.dart';
 import '../../momo_ui/cards/momo_glass_card.dart';
 import '../../momo_ui/buttons/momo_button.dart';
 import '../../momo_ui/icons/momo_custom_icons.dart';
@@ -327,15 +328,16 @@ class LoungeSurface extends StatelessWidget {
               ],
             ),
             const Spacer(),
-            // Master Mochi Mascot with Flirty Wink & Tilt
+            // Master Mochi Mascot matching preview_logo.html
             Center(
-              child: Obx(() => MomoMascot(
-                    mood: controller.mascotMood.value,
-                    size: 160,
-                    autoPlayWink: true,
-                  )),
+              child: const MomoMasterVector(
+                size: 200,
+                isWinking: false,
+              )
+                  .animate(onPlay: (c) => c.repeat(reverse: true))
+                  .moveY(begin: -5, end: 6, duration: 2400.ms, curve: Curves.easeInOut),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
             Center(
               child: Text(
                 'I\'m ready to create with you.',

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'momo_ui/theme/momo_theme.dart';
-import 'features/shell/navigation_shell.dart';
+import 'features/splash/momo_wink_splash_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +17,7 @@ class BabymomoApp extends StatelessWidget {
       title: 'Babymomo',
       debugShowCheckedModeBanner: false,
       theme: MomoTheme.darkTheme,
-      home: const NavigationShell(),
+      home: const MomoWinkSplashScreen(),
     );
   }
 }
