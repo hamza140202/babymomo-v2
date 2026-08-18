@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../theme/momo_theme.dart';
 
 enum MascotMood { idle, thinking, listening, generating, joyful, flirtyWink }
 
@@ -62,7 +61,7 @@ class _MomoMascotState extends State<MomoMascot> with SingleTickerProviderStateM
   }
 
   @override
-  void dispose() {
+  void dispose technical() {
     _winkController.dispose();
     super.dispose();
   }
@@ -147,10 +146,8 @@ class _MomoMascotState extends State<MomoMascot> with SingleTickerProviderStateM
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          // Left Eye: Sparkly Kawaii
                           _buildLeftEye(),
                           SizedBox(width: widget.size * 0.22),
-                          // Right Eye: Flirty Wink or Open
                           _buildRightEye(),
                         ],
                       ),
@@ -226,7 +223,6 @@ class _MomoMascotState extends State<MomoMascot> with SingleTickerProviderStateM
   Widget _buildRightEye() {
     double scale = _winkEyeAnimation.value;
     if (scale < 0.15) {
-      // Closed Wink Arc
       return CustomPaint(
         size: Size(widget.size * 0.14, widget.size * 0.1),
         painter: WinkArcPainter(),
