@@ -28,9 +28,18 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("babymomo_release.keystore")
+            storePassword = "babymomo2026"
+            keyAlias = "babymomo"
+            keyPassword = "babymomo2026"
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }

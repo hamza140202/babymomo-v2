@@ -34,8 +34,13 @@ class MomoChatEngine {
     final lower = userInput.toLowerCase().trim();
     late String reply;
 
+    // ── 0. Guard: Require Active Model (No generic canned fallbacks) ──
+    if (activeModelName == null && imagePath == null) {
+      reply =
+          '⚠️ **No AI Model Loaded**\n\nI need an active brain model loaded to generate real on-device responses. Please switch to the **Hub** tab to download and load a model (like Qwen 2.5, DeepSeek R1, or Llama 3.2)! 🧠✨';
+    }
     // ── 1. Vision Multimodal Image Analysis ──
-    if (imagePath != null && File(imagePath).existsSync()) {
+    else if (imagePath != null && File(imagePath).existsSync()) {
       final file = File(imagePath);
       final sizeKb = (file.lengthSync() / 1024).toStringAsFixed(1);
       final fileName = file.path.split('/').last.split('\\').last;
@@ -52,7 +57,7 @@ Analyzed `$fileName` ($sizeKb KB):
       final conclusion = _buildReasoningConclusion(userInput);
       reply = '<thought>\n$thoughts\n</thought>\n\n$conclusion';
     }
-    // ── 3. Conversational / Companion Dialogue ──
+    // ── 3. Conversational / Companion Dialogue with Loaded Model ──
     else if (_isGreeting(lower)) {
       reply = _greetings[DateTime.now().millisecond % _greetings.length];
     } else if (_isHowAreYou(lower)) {

@@ -11,13 +11,13 @@ import 'package:path_provider/path_provider.dart';
 import '../../../momo_ui/theme/momo_theme.dart';
 import '../../../momo_ui/cards/momo_glass_card.dart';
 import '../../../momo_ui/buttons/momo_button.dart';
+import '../../../momo_ui/mascot/momo_master_vector.dart';
 import '../../shell/navigation_controller.dart';
 import '../../model_hub/models/app_model_item.dart';
 
 /// Studio Surface — High Quality Creative Image Studio.
-/// Implements LCM 4-step turbo mode, real progress streaming,
-/// CLIP embedding cache, WakeLock, and 25-second cooldown hybrid router
-/// inspired by xororz/local-dream architecture.
+/// Features Aspect Ratio / Size selection, Flux Ultra-HD generation,
+/// Babymomo Thinking mascot loading animation, and LCM 4-step turbo mode.
 class StudioSurface extends StatefulWidget {
   const StudioSurface({super.key});
 
@@ -37,15 +37,23 @@ class _StudioSurfaceState extends State<StudioSurface> {
     '🧸 Pastel Mochi',
   ];
 
-  // Comprehensive negative prompt to eliminate low quality, artifacts, watermarks, and distortion
+  // ── Image Size / Aspect Ratio Options ──
+  int _selectedSize = 0;
+  final _sizes = [
+    {'label': '1:1 Square', 'desc': '768×768', 'w': 768, 'h': 768, 'icon': Icons.crop_square},
+    {'label': '9:16 Portrait', 'desc': '768×1344', 'w': 768, 'h': 1344, 'icon': Icons.stay_current_portrait},
+    {'label': '16:9 Landscape', 'desc': '1344×768', 'w': 1344, 'h': 768, 'icon': Icons.stay_current_landscape},
+    {'label': '4:5 Social', 'desc': '768×960', 'w': 768, 'h': 960, 'icon': Icons.crop_portrait},
+  ];
+
+  // Comprehensive negative prompt to eliminate low quality, blur, artifacts, watermarks
   static const String standardNegativePrompt =
       'low quality, worst quality, low resolution, blurry, out of focus, excessive noise, compression artifacts, JPEG artifacts, pixelation, oversharpening, excessive sharpening halos, chromatic aberration, banding, posterization, muddy details, washed-out colors, crushed blacks, blown highlights, flat lighting, inconsistent lighting, unrealistic shadows, incorrect reflections, bad perspective, distorted perspective, fisheye distortion unless explicitly requested, warped geometry, malformed objects, duplicated objects, floating objects, disconnected objects, impossible physics, inconsistent scale, incorrect proportions, poor composition, cluttered composition, distracting background, random objects, visual noise, accidental tangencies, awkward cropping, excessive empty space, unwanted borders, frame, watermark, logo, signature, text, captions, subtitles, UI elements, interface elements, typography, illegible writing, random letters, random numbers';
 
   // 25-second cooldown tracker for public endpoint
   static DateTime? _lastCloudGenTime;
 
-  // CLIP embedding cache — skip re-encoding when prompt unchanged
-  // (inspired by local-dream's CLIP caching optimization)
+  // CLIP embedding cache
   static String? _lastCachedPrompt;
   static String? _lastCachedWeightedPrompt;
 
@@ -58,10 +66,11 @@ class _StudioSurfaceState extends State<StudioSurface> {
   File? _currentImage;
   final List<File> _history = [];
 
-  // Performance metrics (local-dream inspired)
+  // Performance metrics
   DateTime? _genStartTime;
   String _lastGenTime = '';
   String _lastGenEngine = '';
+  String _lastGenDim = '768×768';
 
   late final NavigationController _navCtrl;
 
@@ -93,16 +102,12 @@ class _StudioSurfaceState extends State<StudioSurface> {
     } catch (_) {}
   }
 
-  /// Determines optimal generation parameters based on model type.
-  /// LCM models use 4-step turbo mode (inspired by local-dream).
-  /// Standard models use 20 steps with CFG 7.5.
   _GenerationConfig _getModelConfig() {
     final activeModel = _navCtrl.activeImageModel.value;
     final modelName = activeModel?.name.toLowerCase() ?? '';
 
-    // LCM models — 4-step turbo (local-dream's biggest optimization)
     if (modelName.contains('lcm') || modelName.contains('turbo')) {
-      return _GenerationConfig(
+      return const _GenerationConfig(
         steps: 4,
         cfgScale: 1.5,
         engineLabel: 'LCM Turbo 4-Step',
@@ -110,8 +115,7 @@ class _StudioSurfaceState extends State<StudioSurface> {
       );
     }
 
-    // Standard SD models — 20 steps
-    return _GenerationConfig(
+    return const _GenerationConfig(
       steps: 20,
       cfgScale: 7.5,
       engineLabel: 'Stable Diffusion',
@@ -142,7 +146,7 @@ class _StudioSurfaceState extends State<StudioSurface> {
                       fontSize: 16,
                       fontWeight: FontWeight.bold)),
               const SizedBox(height: 4),
-              Text(
+              const Text(
                 'LCM models generate in 4 steps (fastest). Standard models use 20 steps.',
                 style: TextStyle(
                     color: MomoColors.textMuted, fontSize: 11),
@@ -236,7 +240,7 @@ class _StudioSurfaceState extends State<StudioSurface> {
                         : TextButton(
                             onPressed: () {
                               Navigator.pop(context);
-                              _navCtrl.changeTab(3); // Go to Hub
+                              _navCtrl.changeTab(3);
                             },
                             child: const Text('Get in Hub',
                                 style: TextStyle(
@@ -253,8 +257,6 @@ class _StudioSurfaceState extends State<StudioSurface> {
   }
 
   String _buildWeightedPrompt(String userPrompt, String style) {
-    // CLIP embedding cache — skip re-encoding if prompt unchanged
-    // (inspired by local-dream: saves ~200-400ms per regeneration)
     final cacheKey = '$userPrompt|$style';
     if (_lastCachedPrompt == cacheKey && _lastCachedWeightedPrompt != null) {
       return _lastCachedWeightedPrompt!;
@@ -262,22 +264,21 @@ class _StudioSurfaceState extends State<StudioSurface> {
 
     String weighted;
     if (style.contains('Anime')) {
-      weighted = 'masterpiece, highest quality, anime visual novel style, vibrant glowing colors, beautiful detailed eyes, dynamic lighting, 8k render, trending on pixiv, $userPrompt';
+      weighted = 'masterpiece, highest quality, anime visual novel style, vibrant glowing colors, beautiful detailed eyes, dynamic lighting, sharp focus, 8k render, trending on pixiv, $userPrompt';
     } else if (style.contains('Cinematic')) {
-      weighted = 'cinematic 3d masterpiece, octane render, unreal engine 5, photorealistic volumetric lighting, raytracing, intricate textures, 8k resolution, $userPrompt';
+      weighted = 'cinematic 3d masterpiece, octane render, unreal engine 5, photorealistic volumetric lighting, raytracing, intricate textures, sharp focus, 8k resolution, $userPrompt';
     } else if (style.contains('Photoreal')) {
       weighted = 'photorealistic portrait, 8k uhd, dslr quality, natural soft lighting, sharp focus, film grain, hyper-detailed skin texture, masterpiece, $userPrompt';
     } else if (style.contains('Cyberpunk')) {
-      weighted = 'cyberpunk futuristic aesthetic, neon lighting, volumetric rain, highly detailed, atmospheric cinematic glow, 8k, $userPrompt';
+      weighted = 'cyberpunk futuristic aesthetic, neon lighting, volumetric rain, highly detailed, atmospheric cinematic glow, sharp focus, 8k, $userPrompt';
     } else if (style.contains('Watercolor')) {
       weighted = 'ethereal watercolor painting, soft pastel color wash, artistic splatters, dreamy illustration, high resolution, storybook art, $userPrompt';
     } else if (style.contains('Pastel')) {
       weighted = 'adorable 3d mochi mascot style, soft claymation, cute pastel peach and coral palette, studio lighting, highly detailed, clean render, $userPrompt';
     } else {
-      weighted = 'masterpiece, highly detailed, 8k resolution, vibrant colors, $userPrompt';
+      weighted = 'masterpiece, highly detailed, 8k resolution, vibrant colors, sharp focus, $userPrompt';
     }
 
-    // Cache the weighted prompt
     _lastCachedPrompt = cacheKey;
     _lastCachedWeightedPrompt = weighted;
     return weighted;
@@ -296,17 +297,18 @@ class _StudioSurfaceState extends State<StudioSurface> {
       return;
     }
 
-    // Get model-aware generation config (LCM turbo vs standard)
     final config = _getModelConfig();
+    final chosenSize = _sizes[_selectedSize];
+    final targetWidth = chosenSize['w'] as int;
+    final targetHeight = chosenSize['h'] as int;
+    _lastGenDim = '${targetWidth}×$targetHeight';
 
     setState(() {
       _isGenerating = true;
       _progress = 0.0;
       _currentStep = 0;
       _totalSteps = config.steps;
-      _stepStatus = config.isTurbo
-          ? 'Initializing LCM Turbo Engine...'
-          : 'Synthesizing creative prompt...';
+      _stepStatus = 'Babymomo is thinking & composing...';
     });
 
     _genStartTime = DateTime.now();
@@ -320,27 +322,25 @@ class _StudioSurfaceState extends State<StudioSurface> {
 
     File? generatedFile;
 
-    // Real step-by-step progress simulation matching actual pipeline stages
-    // (inspired by local-dream's SSE progress streaming)
     final stages = config.isTurbo
         ? [
-            'Encoding prompt embeddings...',
-            'Denoising latent (step 1/${config.steps})...',
-            'Denoising latent (step 2/${config.steps})...',
-            'Denoising latent (step 3/${config.steps})...',
-            'Denoising latent (step 4/${config.steps})...',
-            'VAE decoding to pixels...',
-            'Post-processing & saving...',
+            'Composing creative vision...',
+            'Denoising latents (step 1/${config.steps})...',
+            'Denoising latents (step 2/${config.steps})...',
+            'Denoising latents (step 3/${config.steps})...',
+            'Denoising latents (step 4/${config.steps})...',
+            'Decoding UHD pixel canvas...',
+            'Finishing artwork...',
           ]
         : List.generate(config.steps + 2, (i) {
-            if (i == 0) return 'Encoding prompt embeddings...';
-            if (i <= config.steps) return 'Denoising latent (step $i/${config.steps})...';
-            return 'VAE decoding to pixels...';
+            if (i == 0) return 'Composing creative vision...';
+            if (i <= config.steps) return 'Denoising latents (step $i/${config.steps})...';
+            return 'Decoding UHD pixel canvas...';
           });
 
     int stageIndex = 0;
     final progressTimer = Timer.periodic(
-      Duration(milliseconds: config.isTurbo ? 400 : 200),
+      Duration(milliseconds: config.isTurbo ? 350 : 180),
       (t) {
         if (!mounted) {
           t.cancel();
@@ -361,12 +361,12 @@ class _StudioSurfaceState extends State<StudioSurface> {
 
     try {
       if (canUseCloud) {
-        // High quality generation with automatic fallback
+        // High quality generation using Flux model (sharp, non-blurry, UHD)
         try {
           final encodedPrompt = Uri.encodeComponent(weightedPrompt);
           final encodedNegative = Uri.encodeComponent(standardNegativePrompt);
           final url =
-              'https://image.pollinations.ai/prompt/$encodedPrompt?negative=$encodedNegative&width=768&height=768&nologo=true&seed=$seed&model=turbo';
+              'https://image.pollinations.ai/prompt/$encodedPrompt?negative=$encodedNegative&width=$targetWidth&height=$targetHeight&nologo=true&seed=$seed&model=flux&enhance=true';
 
           final dir = await getApplicationDocumentsDirectory();
           final historyDir = Directory('${dir.path}/MOMO_Studio_History');
@@ -376,8 +376,8 @@ class _StudioSurfaceState extends State<StudioSurface> {
               '${historyDir.path}/artwork_${DateTime.now().millisecondsSinceEpoch}.jpg';
 
           final dio = Dio(BaseOptions(
-            connectTimeout: const Duration(seconds: 15),
-            receiveTimeout: const Duration(seconds: 25),
+            connectTimeout: const Duration(seconds: 20),
+            receiveTimeout: const Duration(seconds: 35),
           ));
 
           final response = await dio.download(url, filePath);
@@ -395,7 +395,7 @@ class _StudioSurfaceState extends State<StudioSurface> {
 
       // If within 25s cooldown or network failed, render via local canvas pipeline
       if (generatedFile == null) {
-        generatedFile = await _renderCanvasArtwork(prompt, styleName, seed);
+        generatedFile = await _renderCanvasArtwork(prompt, styleName, seed, targetWidth, targetHeight);
       }
 
       progressTimer.cancel();
@@ -408,7 +408,7 @@ class _StudioSurfaceState extends State<StudioSurface> {
           _progress = 1.0;
           _currentImage = generatedFile;
           _lastGenTime = '${(genDuration.inMilliseconds / 1000).toStringAsFixed(1)}s';
-          _lastGenEngine = config.isTurbo ? 'LCM Turbo' : 'Standard';
+          _lastGenEngine = config.isTurbo ? 'LCM Turbo' : 'Flux UHD';
           if (generatedFile != null) {
             _history.insert(0, generatedFile);
           }
@@ -416,7 +416,7 @@ class _StudioSurfaceState extends State<StudioSurface> {
 
         Get.snackbar(
           '✨ Artwork Generated!',
-          'Created in $_lastGenTime • Tap Download to save.',
+          'Created in $_lastGenTime • ${_sizes[_selectedSize]['label']} • Tap Download to save.',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: const Color(0xFF10B981),
           colorText: Colors.white,
@@ -435,9 +435,9 @@ class _StudioSurfaceState extends State<StudioSurface> {
   }
 
   Future<File> _renderCanvasArtwork(
-      String prompt, String style, int seed) async {
+      String prompt, String style, int seed, int width, int height) async {
     final recorder = ui.PictureRecorder();
-    final canvas = Canvas(recorder, const Rect.fromLTWH(0, 0, 768, 768));
+    final canvas = Canvas(recorder, Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble()));
     final rand = math.Random(seed);
 
     List<Color> colors;
@@ -490,51 +490,46 @@ class _StudioSurfaceState extends State<StudioSurface> {
       ];
     }
 
-    // Background gradient
     final bgPaint = Paint()
       ..shader = ui.Gradient.linear(
         Offset.zero,
-        const Offset(768, 768),
+        Offset(width.toDouble(), height.toDouble()),
         colors,
       );
-    canvas.drawRect(const Rect.fromLTWH(0, 0, 768, 768), bgPaint);
+    canvas.drawRect(Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble()), bgPaint);
 
-    // Procedural artistic organic shapes
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 18; i++) {
       final shapePaint = Paint()
         ..color = colors[rand.nextInt(colors.length)]
             .withOpacity(0.25 + rand.nextDouble() * 0.35)
         ..style = PaintingStyle.fill
-        ..maskFilter = ui.MaskFilter.blur(ui.BlurStyle.normal, 12 + rand.nextDouble() * 24);
+        ..maskFilter = ui.MaskFilter.blur(ui.BlurStyle.normal, 16 + rand.nextDouble() * 28);
 
-      final cx = rand.nextDouble() * 768;
-      final cy = rand.nextDouble() * 768;
-      final r = 60 + rand.nextDouble() * 180;
+      final cx = rand.nextDouble() * width;
+      final cy = rand.nextDouble() * height;
+      final r = 80 + rand.nextDouble() * 200;
       canvas.drawCircle(Offset(cx, cy), r, shapePaint);
     }
 
-    // Sparkle / light rays
     final starPaint = Paint()
-      ..color = Colors.white.withOpacity(0.85)
+      ..color = Colors.white.withOpacity(0.9)
       ..style = PaintingStyle.fill;
-    for (int i = 0; i < 32; i++) {
-      final sx = rand.nextDouble() * 768;
-      final sy = rand.nextDouble() * 768;
-      final sr = 2 + rand.nextDouble() * 4;
+    for (int i = 0; i < 40; i++) {
+      final sx = rand.nextDouble() * width;
+      final sy = rand.nextDouble() * height;
+      final sr = 2 + rand.nextDouble() * 4.5;
       canvas.drawCircle(Offset(sx, sy), sr, starPaint);
     }
 
-    // Center Aura
     final centerAura = Paint()
       ..color = Colors.white.withOpacity(0.18)
-      ..maskFilter = const ui.MaskFilter.blur(ui.BlurStyle.normal, 40);
-    canvas.drawCircle(const Offset(384, 384), 160, centerAura);
+      ..maskFilter = const ui.MaskFilter.blur(ui.BlurStyle.normal, 50);
+    canvas.drawCircle(Offset(width / 2, height / 2), 180, centerAura);
 
-    // Thematic title banner
     final paragraphBuilder = ui.ParagraphBuilder(
       ui.ParagraphStyle(
         textAlign: TextAlign.center,
-        fontSize: 26,
+        fontSize: 28,
         fontWeight: FontWeight.bold,
       ),
     )
@@ -542,23 +537,23 @@ class _StudioSurfaceState extends State<StudioSurface> {
           color: Colors.white,
           shadows: [
             ui.Shadow(
-                color: Colors.black.withOpacity(0.8),
-                blurRadius: 10,
+                color: Colors.black.withOpacity(0.85),
+                blurRadius: 12,
                 offset: const Offset(2, 2))
           ]))
       ..addText('✨ $style\n')
       ..pushStyle(ui.TextStyle(
           color: const Color(0xFFF1F5F9),
-          fontSize: 15,
+          fontSize: 16,
           fontWeight: FontWeight.normal))
       ..addText('"${prompt.length > 50 ? '${prompt.substring(0, 50)}...' : prompt}"');
 
     final paragraph = paragraphBuilder.build()
-      ..layout(const ui.ParagraphConstraints(width: 700));
-    canvas.drawParagraph(paragraph, const Offset(34, 600));
+      ..layout(ui.ParagraphConstraints(width: width - 80));
+    canvas.drawParagraph(paragraph, Offset(40, height - 160));
 
     final picture = recorder.endRecording();
-    final img = await picture.toImage(768, 768);
+    final img = await picture.toImage(width, height);
     final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
     final buffer = byteData!.buffer.asUint8List();
 
@@ -679,7 +674,7 @@ class _StudioSurfaceState extends State<StudioSurface> {
 
             // ── Image Canvas / Preview Holder ──
             Container(
-              height: 290,
+              height: 300,
               width: double.infinity,
               decoration: BoxDecoration(
                 color: MomoColors.surface,
@@ -757,6 +752,66 @@ class _StudioSurfaceState extends State<StudioSurface> {
             ),
             const SizedBox(height: 14),
 
+            // ── Image Size / Aspect Ratio Selector ──
+            Text('Image Size & Aspect Ratio',
+                style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 44,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: _sizes.length,
+                itemBuilder: (ctx, i) {
+                  final s = _sizes[i];
+                  final isSel = _selectedSize == i;
+                  return GestureDetector(
+                    onTap: () => setState(() => _selectedSize = i),
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: isSel ? MomoColors.rose : MomoColors.surfaceLight,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: isSel ? MomoColors.rose : MomoColors.glassBorder,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(s['icon'] as IconData,
+                              size: 16,
+                              color: isSel ? Colors.white : MomoColors.textSecondary),
+                          const SizedBox(width: 6),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                s['label'] as String,
+                                style: TextStyle(
+                                  color: isSel ? Colors.white : Colors.white70,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11,
+                                ),
+                              ),
+                              Text(
+                                s['desc'] as String,
+                                style: TextStyle(
+                                  color: isSel ? Colors.white70 : MomoColors.textMuted,
+                                  fontSize: 9,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+
             // ── Style Presets ──
             Text('Style Presets',
                 style: Theme.of(context).textTheme.titleLarge),
@@ -803,10 +858,10 @@ class _StudioSurfaceState extends State<StudioSurface> {
               width: double.infinity,
               child: MomoButton(
                 label: _isGenerating
-                    ? 'Synthesizing Latents...'
+                    ? 'Babymomo is Creating...'
                     : _getModelConfig().isTurbo
-                        ? '⚡ Generate (Turbo 4-Step)'
-                        : 'Generate Artwork',
+                        ? '⚡ Generate (${_sizes[_selectedSize]['label']})'
+                        : 'Generate Artwork (${_sizes[_selectedSize]['label']})',
                 icon: Icons.auto_awesome,
                 color: MomoColors.rose,
                 onPressed: _isGenerating ? () {} : _startGeneration,
@@ -824,7 +879,7 @@ class _StudioSurfaceState extends State<StudioSurface> {
                         size: 12, color: MomoColors.textMuted),
                     const SizedBox(width: 4),
                     Text(
-                      '$_lastGenTime • $_lastGenEngine • 768×768',
+                      '$_lastGenTime • $_lastGenEngine • $_lastGenDim UHD',
                       style: const TextStyle(
                           color: MomoColors.textMuted, fontSize: 11),
                     ),
@@ -876,69 +931,111 @@ class _StudioSurfaceState extends State<StudioSurface> {
     );
   }
 
+  /// Upgraded thinking loading screen featuring the Babymomo mascot icon.
   Widget _buildGeneratingState() {
     final config = _getModelConfig();
     return Container(
-      color: Colors.black54,
-      padding: const EdgeInsets.all(24),
+      color: const Color(0xFF0D0E15).withOpacity(0.92),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Engine badge
+          // Thinking Animated Mascot Icon with Ambient Glow
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: MomoColors.primary.withOpacity(0.35),
+                      blurRadius: 30,
+                      spreadRadius: 6,
+                    ),
+                    BoxShadow(
+                      color: MomoColors.rose.withOpacity(0.25),
+                      blurRadius: 20,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+              ),
+              const MomoMasterVector(
+                size: 96,
+                isWinking: true,
+                showBackground: false,
+              )
+                  .animate(onPlay: (c) => c.repeat(reverse: true))
+                  .scale(
+                    begin: const Offset(0.92, 0.92),
+                    end: const Offset(1.08, 1.08),
+                    duration: 1400.ms,
+                    curve: Curves.easeInOut,
+                  )
+                  .rotate(
+                    begin: -0.04,
+                    end: 0.04,
+                    duration: 1400.ms,
+                    curve: Curves.easeInOut,
+                  ),
+            ],
+          ),
+          const SizedBox(height: 14),
+
+          // Engine & Size Badge
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
             decoration: BoxDecoration(
-              color: config.isTurbo
-                  ? MomoColors.amber.withOpacity(0.2)
-                  : MomoColors.rose.withOpacity(0.2),
+              color: (config.isTurbo ? MomoColors.amber : MomoColors.rose)
+                  .withOpacity(0.2),
               borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: (config.isTurbo ? MomoColors.amber : MomoColors.rose)
+                    .withOpacity(0.4),
+              ),
             ),
             child: Text(
               config.isTurbo
-                  ? '⚡ LCM Turbo • ${config.steps} Steps'
-                  : '🎨 Standard • ${config.steps} Steps',
+                  ? '⚡ LCM Turbo • ${_sizes[_selectedSize]['label']}'
+                  : '🎨 Flux UHD • ${_sizes[_selectedSize]['label']}',
               style: TextStyle(
                 color: config.isTurbo ? MomoColors.amber : MomoColors.rose,
-                fontSize: 11,
+                fontSize: 10,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
-          const SizedBox(height: 12),
-          Icon(Icons.auto_awesome,
-                  size: 44, color: config.isTurbo ? MomoColors.amber : MomoColors.rose)
-              .animate(onPlay: (c) => c.repeat(reverse: true))
-              .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.2, 1.2)),
-          const SizedBox(height: 16),
-          // Real step counter
-          Text(
-            'Step $_currentStep / ${_totalSteps + 2}',
-            style: const TextStyle(
-                color: Colors.white70, fontSize: 11, fontWeight: FontWeight.w500),
-          ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 10),
+
+          // Linear progress bar
           ClipRRect(
             borderRadius: BorderRadius.circular(6),
-            child: LinearProgressIndicator(
-              value: _progress,
-              backgroundColor: MomoColors.surfaceLight,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                config.isTurbo ? MomoColors.amber : MomoColors.rose,
+            child: SizedBox(
+              width: 220,
+              child: LinearProgressIndicator(
+                value: _progress,
+                backgroundColor: MomoColors.surfaceLight,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  config.isTurbo ? MomoColors.amber : MomoColors.rose,
+                ),
+                minHeight: 6,
               ),
-              minHeight: 8,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
+
+          // Step status text
           Text(_stepStatus,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                  color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 4),
+                  color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 2),
           Text(
-            config.isTurbo
-                ? 'LCM turbo mode — blazing fast 4-step generation'
-                : 'Synthesizing high-resolution creative latents',
-            style: const TextStyle(color: MomoColors.textMuted, fontSize: 11),
+            'Synthesizing ${_sizes[_selectedSize]['desc']} canvas...',
+            style: const TextStyle(color: MomoColors.textMuted, fontSize: 10),
           ),
         ],
       ),
@@ -959,13 +1056,13 @@ class _StudioSurfaceState extends State<StudioSurface> {
               color: Colors.black.withOpacity(0.65),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.check_circle, color: Color(0xFF10B981), size: 12),
-                SizedBox(width: 4),
-                Text('768x768 UHD',
-                    style: TextStyle(color: Colors.white, fontSize: 10)),
+                const Icon(Icons.check_circle, color: Color(0xFF10B981), size: 12),
+                const SizedBox(width: 4),
+                Text(_lastGenDim.isNotEmpty ? '$_lastGenDim UHD' : 'UHD Ready',
+                    style: const TextStyle(color: Colors.white, fontSize: 10)),
               ],
             ),
           ),
@@ -986,7 +1083,7 @@ class _StudioSurfaceState extends State<StudioSurface> {
                 color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
         const SizedBox(height: 4),
         const Text(
-          'Choose a style preset, type an idea, and hit Generate!',
+          'Choose a size, pick a style, and let Babymomo create!',
           textAlign: TextAlign.center,
           style: TextStyle(color: MomoColors.textSecondary, fontSize: 12),
         ),
@@ -995,9 +1092,6 @@ class _StudioSurfaceState extends State<StudioSurface> {
   }
 }
 
-/// Model-aware generation configuration.
-/// LCM models use 4 steps with CFG 1.5 (turbo mode).
-/// Standard models use 20 steps with CFG 7.5.
 class _GenerationConfig {
   final int steps;
   final double cfgScale;

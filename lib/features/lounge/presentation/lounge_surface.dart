@@ -72,13 +72,42 @@ class LoungeSurface extends StatelessWidget {
             ),
             const Spacer(),
             Center(
-              child: const MomoMasterVector(size: 200, isWinking: false)
-                  .animate(onPlay: (c) => c.repeat(reverse: true))
-                  .moveY(
-                      begin: -6,
-                      end: 6,
-                      duration: 2400.ms,
-                      curve: Curves.easeInOut),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Ambient warm glow aura
+                  Container(
+                    width: 220,
+                    height: 220,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: MomoColors.primary.withOpacity(0.2),
+                          blurRadius: 50,
+                          spreadRadius: 10,
+                        ),
+                        BoxShadow(
+                          color: MomoColors.rose.withOpacity(0.15),
+                          blurRadius: 30,
+                          spreadRadius: 5,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const MomoMasterVector(
+                    size: 210,
+                    isWinking: false,
+                    showBackground: false,
+                  )
+                      .animate(onPlay: (c) => c.repeat(reverse: true))
+                      .moveY(
+                          begin: -8,
+                          end: 8,
+                          duration: 2600.ms,
+                          curve: Curves.easeInOut),
+                ],
+              ),
             ),
             const SizedBox(height: 20),
             Center(

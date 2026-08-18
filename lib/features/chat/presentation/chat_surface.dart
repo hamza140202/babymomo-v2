@@ -34,101 +34,75 @@ class _ChatSurfaceState extends State<ChatSurface> {
     _initSpeech();
   }
 
-  Future<void> _initSpeech() async {
+  Future<bool> _initSpeech() async {
     try {
+      final status = await Permission.microphone.request();
+      if (!status.isGranted) {
+        _speechAvailable = false;
+        return false;
+      }
+
       _speechAvailable = await _speech.initialize(
-        onError: (e) => setState(() => _isListening = false),
+        onError: (e) {
+          if (mounted) setState(() => _isListening = false);
+        },
         onStatus: (s) {
           if (s == 'done' || s == 'notListening') {
-            setState(() => _isListening = false);
+            if (mounted) setState(() => _isListening = false);
           }
         },
       );
+      return _speechAvailable;
     } catch (_) {
       _speechAvailable = false;
+      return false;
     }
-  }
-
-  void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollCtrl.hasClients) {
-        _scrollCtrl.animateTo(
-          _scrollCtrl.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-    });
-  }
-
-  Future<void> _pickImage() async {
-    await showModalBottomSheet(
-      context: context,
-      backgroundColor: MomoColors.surface,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (_) => SafeArea(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          const SizedBox(height: 12),
-          Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                  color: MomoColors.glassBorder,
-                  borderRadius: BorderRadius.circular(2))),
-          const SizedBox(height: 16),
-          ListTile(
-            leading: const Icon(Icons.photo_library_outlined,
-                color: MomoColors.cyan),
-            title: const Text('Choose from Gallery',
-                style: TextStyle(color: Colors.white)),
-            onTap: () async {
-              Navigator.pop(context);
-              final xf = await _picker.pickImage(
-                  source: ImageSource.gallery, imageQuality: 85);
-              if (xf != null) setState(() => _pendingImage = File(xf.path));
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.camera_alt_outlined,
-                color: MomoColors.rose),
-            title: const Text('Take Photo',
-                style: TextStyle(color: Colors.white)),
-            onTap: () async {
-              Navigator.pop(context);
-              final xf = await _picker.pickImage(
-                  source: ImageSource.camera, imageQuality: 85);
-              if (xf != null) setState(() => _pendingImage = File(xf.path));
-            },
-          ),
-          const SizedBox(height: 8),
-        ]),
-      ),
-    );
   }
 
   Future<void> _toggleMic() async {
     if (!_speechAvailable) {
-      Get.snackbar('Mic Unavailable',
+      final ok = await _initSpeech();
+      if (!ok) {
+        Get.snackbar(
+          'Microphone Permission Needed 🎙️',
           'Please allow microphone permission to talk with Babymomo.',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: MomoColors.rose,
-          colorText: Colors.white);
-      return;
+          colorText: Colors.white,
+        );
+        return;
+      }
     }
 
     if (_isListening) {
       await _speech.stop();
-      setState(() => _isListening = false);
+      if (mounted) setState(() => _isListening = false);
     } else {
-      setState(() => _isListening = true);
+      if (mounted) setState(() => _isListening = true);
+
+      final initialText = _textCtrl.text;
       await _speech.listen(
         onResult: (result) {
-          setState(() => _textCtrl.text = result.recognizedWords);
-          if (result.finalResult) setState(() => _isListening = false);
+          if (mounted) {
+            setState(() {
+              final newWords = result.recognizedWords;
+              _textCtrl.text = initialText.isNotEmpty
+                  ? '$initialText $newWords'
+                  : newWords;
+              _textCtrl.selection = TextSelection.fromPosition(
+                TextPosition(offset: _textCtrl.text.length),
+              );
+            });
+            if (result.finalResult) {
+              setState(() => _isListening = false);
+            }
+          }
         },
-        localeId: 'en_US',
-        listenMode: stt.ListenMode.confirmation,
+        listenFor: const Duration(seconds: 30),
+        pauseFor: const Duration(seconds: 3),
+        partialResults: true,
+        cancelOnError: true,
+        listenMode: stt.ListenMode.dictation,
       );
     }
   }
