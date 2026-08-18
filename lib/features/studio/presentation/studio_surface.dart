@@ -212,7 +212,7 @@ class _StudioSurfaceState extends State<StudioSurface> {
                                 isActive ? FontWeight.bold : FontWeight.normal,
                           )),
                       subtitle: Text(
-                        '${m.size} • ${isLcm ? '4-step LCM' : '20-step Diffusion'}',
+                        '${m.sizeStr} • ${isLcm ? '4-step LCM' : '20-step Diffusion'}',
                         style: const TextStyle(
                             color: MomoColors.textMuted, fontSize: 11),
                       ),
@@ -229,7 +229,7 @@ class _StudioSurfaceState extends State<StudioSurface> {
                           : isDownloaded
                               ? OutlinedButton(
                                   onPressed: () {
-                                    _navCtrl.setActiveImageModel(m);
+                                    _navCtrl.activeImageModel.value = m;
                                     Navigator.pop(context);
                                   },
                                   style: OutlinedButton.styleFrom(
