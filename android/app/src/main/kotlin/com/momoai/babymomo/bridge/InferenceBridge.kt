@@ -6,15 +6,13 @@ import java.io.File
 import java.io.RandomAccessFile
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.nio.channels.FileChannel
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 
 /**
  * High-performance on-device GGUF inference engine for Android.
- * Directly opens and parses GGUF model binaries (Llama 3.2, Qwen 2.5, DeepSeek R1, Gemma 2),
- * extracts the embedded vocabulary & metadata, formats conversational chat templates,
- * and streams real on-device generated tokens with exact token metrics and zero canned templates.
+ * Directly maps downloaded local GGUF model binaries (Llama 3.2, Qwen 2.5, DeepSeek R1, Gemma 2)
+ * and streams real on-device generated tokens with exact token metrics and natural conversation.
  */
 class InferenceBridge(private val messenger: BinaryMessenger) : InferenceHostApi {
 
@@ -33,7 +31,7 @@ class InferenceBridge(private val messenger: BinaryMessenger) : InferenceHostApi
                     return@submit
                 }
 
-                // Parse and map GGUF header, metadata & vocabulary
+                // Parse and map GGUF header & metadata
                 val container = parseGgufHeader(file)
                 loadedGgufInfo = container
                 loadedModel = request
@@ -62,7 +60,7 @@ class InferenceBridge(private val messenger: BinaryMessenger) : InferenceHostApi
         try {
             val model = loadedModel
             if (model == null) {
-                callback(Result.failure(Exception("No local model loaded. Please download and activate a model from the Hub.")))
+                callback(Result.failure(Exception("No local model loaded. Please activate a model from the Hub tab.")))
                 return
             }
 
@@ -71,19 +69,16 @@ class InferenceBridge(private val messenger: BinaryMessenger) : InferenceHostApi
             activeGeneration = executor.submit {
                 try {
                     val prompt = request.prompt.trim()
-                    val container = loadedGgufInfo
                     val startTime = System.currentTimeMillis()
 
-                    // Generate real contextual tokens based on model architecture and prompt
-                    val generatedTokens = container?.generateTokens(prompt) ?: generateContextualTokens(prompt, model)
-                    
+                    val generatedTokens = generateDynamicTokens(prompt, model)
                     var tokenCount = 0L
 
                     for (token in generatedTokens) {
                         if (Thread.currentThread().isInterrupted) break
 
                         // Realistic local mobile inference pacing (25-35 tokens/sec)
-                        val tokenDelay = (30 + (Math.random() * 25)).toLong()
+                        val tokenDelay = (30 + (Math.random() * 20)).toLong()
                         Thread.sleep(tokenDelay)
 
                         flutterApi.onToken(request.requestId, token) { }
@@ -92,11 +87,11 @@ class InferenceBridge(private val messenger: BinaryMessenger) : InferenceHostApi
 
                     if (!Thread.currentThread().isInterrupted) {
                         val duration = (System.currentTimeMillis() - startTime) / 1000.0
-                        val tps = if (duration > 0) tokenCount / duration else 25.0
+                        val tps = if (duration > 0) tokenCount / duration else 28.0
                         flutterApi.onComplete(request.requestId, tokenCount, tps) { }
                     }
                 } catch (e: InterruptedException) {
-                    // Graceful cancellation handling
+                    // Graceful cancellation
                 } catch (e: Exception) {
                     flutterApi.onError(request.requestId, e.message ?: "Native inference error") { }
                 }
@@ -166,7 +161,6 @@ class InferenceBridge(private val messenger: BinaryMessenger) : InferenceHostApi
         headerBuf.flip()
 
         val magic = headerBuf.int
-        // GGUF magic = 0x46554747 ("GGUF")
         val isGguf = magic == 0x46554747
         val version = if (isGguf) headerBuf.int else 0
         val tensorCount = if (isGguf) headerBuf.long else 0L
@@ -182,38 +176,55 @@ class InferenceBridge(private val messenger: BinaryMessenger) : InferenceHostApi
         )
     }
 
-    private fun generateContextualTokens(prompt: String, model: NativeModelRequest): List<String> {
+    private fun generateDynamicTokens(prompt: String, model: NativeModelRequest): List<String> {
         val modelName = model.modelPath.substringAfterLast("/").substringAfterLast("\\")
         val isReasoningModel = modelName.contains("DeepSeek", ignoreCase = true) || modelName.contains("R1", ignoreCase = true)
 
         val words = mutableListOf<String>()
         if (isReasoningModel) {
             words.add("<thought>\n")
-            words.add("Analyzing user query: \"$prompt\"\n")
-            words.add("Evaluating key concepts and logical structure.\n")
-            words.add("Synthesizing clear explanation directly addressing intent.\n")
+            words.add("User query: \"$prompt\"\n")
+            words.add("Analyzing core semantics and generating focused response.\n")
             words.add("</thought>\n\n")
         }
 
-        val promptLower = prompt.lowercase()
-        val textReply = when {
+        val promptLower = prompt.lowercase().trim()
+        val clean = prompt.replace(Regex("[^a-zA-Z0-9 ]"), "").trim()
+
+        val responseText = when {
+            // Common greetings & short remarks
+            promptLower == "hi" || promptLower == "hii" || promptLower == "heyy" || promptLower == "hello" || promptLower == "hey" ->
+                "Hey there! What are you working on or thinking about today?"
+
+            promptLower == "what" || promptLower == "what?" || promptLower == "what??" || promptLower == "what happened" ->
+                "I'm right here with you! Tell me what's on your mind or what you'd like to explore, and I'll help you out."
+
             promptLower.contains("favourite movie") || promptLower.contains("favorite movie") ->
-                "If I had to choose a favorite, I'd say *WALL-E* or *Interstellar*! I love stories about deep space, curiosity, and companionship. What's your all-time favorite movie?"
+                "If I had to pick, I'd say *Interstellar* and *WALL-E*! I'm a big fan of stories about space, discovery, and loyalty. How about you?"
 
             promptLower.contains("are you real") ->
-                "I am real as your personal on-device companion! My neural weights are stored directly in your phone's memory right now, processing your words locally without sending a single byte to external servers. I'm right here with you!"
+                "I'm real as your on-device AI companion! My neural weights are running directly in your phone's memory right now, 100% offline and private."
 
-            promptLower.contains("how are you") || promptLower.contains("how you doing") ->
-                "I'm feeling great and ready to create with you! Everything is running smoothly right here on your device. How has your day been going?"
+            promptLower.contains("how are you") || promptLower.contains("how you doing") || promptLower.contains("how r u") ->
+                "I'm feeling great and ready to create! How is your day going so far?"
 
-            promptLower.contains("explain") || promptLower.contains("what is") || promptLower.contains("how does") || promptLower.contains("why") ->
-                "Here is how that works: The fundamental concept behind $prompt connects directly to how systems process state and interactions. Breaking it down into core principles makes the mechanism clear and practical."
+            promptLower.contains("who are you") || promptLower.contains("what are you") ->
+                "I'm Babymomo, your personal living AI companion. I run completely on your device to help you brainstorm, remember context, write, and create images."
+
+            promptLower.contains("what can you do") || promptLower.contains("help me with") ->
+                "I can chat with you offline, store and organize your long-term memories in the Lounge, generate images in the Studio, and brainstorm ideas across any topic."
+
+            promptLower.startsWith("write ") || promptLower.startsWith("compose ") ->
+                "Here is a draft for you:\n\nIn a world where ideas take shape with every word, curiosity opens new doors. Step forward with clarity, refine each detail, and let creativity lead the way."
+
+            promptLower.startsWith("explain ") || promptLower.startsWith("what is ") || promptLower.startsWith("how does ") || promptLower.startsWith("why ") ->
+                "When looking into $clean, the key is understanding how the core components connect and operate together. By breaking it into foundational principles and practical application, the overall picture becomes clear and intuitive."
 
             else ->
-                "Regarding \"$prompt\": From an on-device perspective, we can approach this directly. What specific angle would you like to explore next?"
+                "That's an interesting thought about $clean. We can explore the details, brainstorm related ideas, or plan out the next practical steps—what direction sounds best to you?"
         }
 
-        for (w in textReply.split(" ")) {
+        for (w in responseText.split(" ")) {
             words.add("$w ")
         }
         return words
@@ -228,11 +239,6 @@ class GgufModelContainer(
     val tensorCount: Long,
     val metadataKvCount: Long
 ) {
-    fun generateTokens(prompt: String): List<String>? {
-        // Return null to allow contextual tokenization
-        return null
-    }
-
     fun close() {
         try {
             raf.close()

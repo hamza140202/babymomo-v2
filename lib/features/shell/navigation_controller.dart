@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
+import '../../momo_core/momo_core.dart';
 import '../../momo_ui/theme/momo_theme.dart';
 import '../../services/download_notification_service.dart';
 import '../model_hub/models/app_model_item.dart';
@@ -308,12 +310,13 @@ class NavigationController extends GetxController {
 
   // ─── Chat Actions ─────────────────────────────────────────────────────────
   Future<void> sendChat(String text, {File? imageFile}) async {
-    if (text.trim().isEmpty && imageFile == null) return;
+    final trimmed = text.trim();
+    if (trimmed.isEmpty && imageFile == null) return;
     if (isTyping.value) return;
 
     chatMessages.add({
       'role': 'user',
-      'content': text.trim().isNotEmpty ? text.trim() : 'Analyse this image for me 📸',
+      'content': trimmed.isNotEmpty ? trimmed : 'Analyse this image for me 📸',
       'image': imageFile?.path,
     });
 
@@ -321,25 +324,118 @@ class NavigationController extends GetxController {
     streamBuffer.value = '';
 
     chatMessages.add({'role': 'momo', 'content': '__typing__', 'image': null});
-
-    final input = imageFile != null
-        ? 'Image attached. ${text.trim()}'
-        : text.trim();
+    final lastIndex = chatMessages.length - 1;
 
     try {
-      await for (final partial in MomoChatEngine.respond(
-        text.trim(),
-        activeModelName: activeModel.value?.name,
-        imagePath: imageFile?.path,
-        isVision: activeModel.value?.isVision ?? false,
-      )) {
-        streamBuffer.value = partial;
-        chatMessages[chatMessages.length - 1] = {
+      // 1. Vision Multimodal Analysis
+      if (imageFile != null) {
+        await for (final partial in MomoChatEngine.respondVision(trimmed, imageFile.path)) {
+          streamBuffer.value = partial;
+          chatMessages[lastIndex] = {
+            'role': 'momo',
+            'content': partial,
+            'image': null,
+          };
+        }
+        return;
+      }
+
+      // 2. On-Device Model Inference
+      final currentModel = activeModel.value;
+      if (currentModel == null) {
+        chatMessages[lastIndex] = {
           'role': 'momo',
-          'content': partial,
+          'content':
+              '⚠️ **No Brain Model Loaded**\n\nPlease switch to the **Hub** tab to download and activate an on-device model (such as Llama 3.2, Qwen 2.5, or DeepSeek R1)! 🧠✨',
           'image': null,
         };
+        return;
       }
+
+      final dir = await getApplicationDocumentsDirectory();
+      final modelFile = File('${dir.path}/${currentModel.id}.bin');
+      if (!await modelFile.exists()) {
+        chatMessages[lastIndex] = {
+          'role': 'momo',
+          'content':
+              '⚠️ **Model File Missing**\n\nThe local binary file for ${currentModel.name} was not found on device storage. Please redownload it from the **Hub** tab.',
+          'image': null,
+        };
+        return;
+      }
+
+      // Ensure model is loaded in native engine
+      final registry = Get.find<RuntimeRegistry>();
+      final localAdapter = registry.get('llama_cpp') as LlamaCppAdapter?;
+      if (localAdapter != null && localAdapter.loadedModelPath != modelFile.path) {
+        await localAdapter.loadModel(modelFile.path);
+      }
+
+      // Build contextual messages
+      final contextList = <ContextMessage>[
+        ContextMessage(
+          role: 'system',
+          content: 'You are Babymomo, a friendly, intelligent on-device AI companion.',
+          timestamp: DateTime.now(),
+        ),
+      ];
+
+      // Append recent history
+      final historySlice = chatMessages.take(chatMessages.length - 2).toList();
+      for (final msg in historySlice.reversed.take(6).toList().reversed) {
+        if (msg['role'] == 'user' || msg['role'] == 'momo') {
+          contextList.add(ContextMessage(
+            role: msg['role'] == 'user' ? 'user' : 'assistant',
+            content: msg['content']?.toString() ?? '',
+            timestamp: DateTime.now(),
+          ));
+        }
+      }
+
+      final reqId = const Uuid().v4();
+      final request = InferenceRequest(
+        id: reqId,
+        prompt: trimmed,
+        systemPrompt: 'You are Babymomo, a friendly, intelligent on-device AI companion.',
+        context: contextList,
+        modality: Modality.text,
+        parameters: const InferenceParameters(
+          temperature: 0.7,
+          maxTokens: 512,
+        ),
+      );
+
+      final router = Get.find<InferenceRouter>();
+      final stream = router.route(request);
+
+      final tokenBuffer = StringBuffer();
+      await for (final res in stream) {
+        if (res.isError) {
+          tokenBuffer.write('\n\n*(Inference error: ${res.error})*');
+          chatMessages[lastIndex] = {
+            'role': 'momo',
+            'content': tokenBuffer.toString(),
+            'image': null,
+          };
+          break;
+        }
+
+        tokenBuffer.write(res.content);
+        streamBuffer.value = tokenBuffer.toString();
+        chatMessages[lastIndex] = {
+          'role': 'momo',
+          'content': tokenBuffer.toString(),
+          'image': null,
+        };
+
+        if (res.isDone) break;
+      }
+    } catch (e) {
+      chatMessages[lastIndex] = {
+        'role': 'momo',
+        'content': '❌ Error during local inference: $e',
+        'image': null,
+      };
     } finally {
       isTyping.value = false;
     }
@@ -361,28 +457,47 @@ class NavigationController extends GetxController {
     }
 
     isLoadingModel.value = true;
-    await Future.delayed(const Duration(milliseconds: 600));
-    activeModel.value = model;
-    isLoadingModel.value = false;
+    try {
+      final dir = await getApplicationDocumentsDirectory();
+      final filePath = '${dir.path}/${model.id}.bin';
 
-    chatMessages.add({
-      'role': 'momo',
-      'content':
-          'I\'ve loaded ${model.name.split('(').first.trim()} as my active brain! 🧠✨ My memory and reasoning are fully primed. What shall we explore?',
-      'image': null,
-    });
+      final registry = Get.find<RuntimeRegistry>();
+      final localAdapter = registry.get('llama_cpp') as LlamaCppAdapter?;
+      if (localAdapter != null) {
+        await localAdapter.loadModel(filePath);
+      }
 
-    currentIndex.value = 1;
+      activeModel.value = model;
 
-    if (notify) {
+      chatMessages.add({
+        'role': 'momo',
+        'content':
+            'I\'ve loaded ${model.name.split('(').first.trim()} as my active brain! 🧠✨ My on-device neural core is fully primed. What shall we explore?',
+        'image': null,
+      });
+
+      currentIndex.value = 1;
+
+      if (notify) {
+        Get.snackbar(
+          '🧠 Brain Model Loaded!',
+          '${model.name.split('(').first.trim()} is active. Let\'s chat!',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: MomoColors.primary,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+      }
+    } catch (e) {
       Get.snackbar(
-        '🧠 Brain Model Loaded!',
-        '${model.name.split('(').first.trim()} is active. Let\'s chat!',
+        'Model Load Error',
+        'Could not initialize local model: $e',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: MomoColors.primary,
+        backgroundColor: MomoColors.rose,
         colorText: Colors.white,
-        duration: const Duration(seconds: 3),
       );
+    } finally {
+      isLoadingModel.value = false;
     }
   }
 
