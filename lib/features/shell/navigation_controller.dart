@@ -364,8 +364,8 @@ class NavigationController extends GetxController {
         return;
       }
 
-      // Ensure model is loaded in native engine
-      final registry = Get.find<RuntimeRegistry>();
+      // Ensure inference runtime engines are initialized
+      final (:registry, :router) = _ensureInferenceEngines();
       final localAdapter = registry.resolve('llama_cpp') as LlamaCppAdapter?;
       if (localAdapter != null && localAdapter.loadedModelPath != modelFile.path) {
         await localAdapter.loadModel(modelFile.path);
@@ -405,7 +405,6 @@ class NavigationController extends GetxController {
         ),
       );
 
-      final router = Get.find<InferenceRouter>();
       final stream = router.route(request);
 
       final tokenBuffer = StringBuffer();
@@ -441,6 +440,32 @@ class NavigationController extends GetxController {
     }
   }
 
+  ({RuntimeRegistry registry, InferenceRouter router}) _ensureInferenceEngines() {
+    RuntimeRegistry registry;
+    if (Get.isRegistered<RuntimeRegistry>()) {
+      registry = Get.find<RuntimeRegistry>();
+    } else {
+      registry = RuntimeRegistry();
+      Get.put<RuntimeRegistry>(registry, permanent: true);
+    }
+
+    if (registry.resolve('llama_cpp') == null) {
+      final localAdapter = LlamaCppAdapter();
+      localAdapter.initialize(const RuntimeConfig(contextLength: 2048, useGPU: true));
+      registry.register(localAdapter);
+    }
+
+    InferenceRouter router;
+    if (Get.isRegistered<InferenceRouter>()) {
+      router = Get.find<InferenceRouter>();
+    } else {
+      router = InferenceRouter(registry: registry);
+      Get.put<InferenceRouter>(router, permanent: true);
+    }
+
+    return (registry: registry, router: router);
+  }
+
   Future<void> loadModelForChat(AppModelItem model, {bool notify = true}) async {
     if (!model.isDownloaded.value) return;
     if (activeModel.value?.id == model.id) {
@@ -461,7 +486,7 @@ class NavigationController extends GetxController {
       final dir = await getApplicationDocumentsDirectory();
       final filePath = '${dir.path}/${model.id}.bin';
 
-      final registry = Get.find<RuntimeRegistry>();
+      final (:registry, router: _) = _ensureInferenceEngines();
       final localAdapter = registry.resolve('llama_cpp') as LlamaCppAdapter?;
       if (localAdapter != null) {
         await localAdapter.loadModel(filePath);
