@@ -1,5 +1,7 @@
 package com.momoai.babymomo.bridge
 
+import android.os.Handler
+import android.os.Looper
 import io.flutter.plugin.common.BinaryMessenger
 import com.momoai.babymomo.pigeon.inference.*
 import java.io.File
@@ -13,10 +15,12 @@ import java.util.concurrent.Future
  * High-performance on-device GGUF inference engine for Android.
  * Directly maps downloaded local GGUF model binaries (Llama 3.2, Qwen 2.5, DeepSeek R1, Gemma 2)
  * and streams real on-device generated tokens with exact token metrics and natural conversation.
+ * All Flutter Pigeon callbacks are posted to the Main Looper to guarantee instant delivery to Dart.
  */
 class InferenceBridge(private val messenger: BinaryMessenger) : InferenceHostApi {
 
     private val executor = Executors.newSingleThreadExecutor()
+    private val mainHandler = Handler(Looper.getMainLooper())
     private var loadedModel: NativeModelRequest? = null
     private var loadedGgufInfo: GgufModelContainer? = null
     private var activeGeneration: Future<*>? = null
@@ -27,7 +31,9 @@ class InferenceBridge(private val messenger: BinaryMessenger) : InferenceHostApi
             try {
                 val file = File(request.modelPath)
                 if (!file.exists()) {
-                    callback(Result.failure(Exception("Model file not found at: ${request.modelPath}")))
+                    mainHandler.post {
+                        callback(Result.failure(Exception("Model file not found at: ${request.modelPath}")))
+                    }
                     return@submit
                 }
 
@@ -35,9 +41,13 @@ class InferenceBridge(private val messenger: BinaryMessenger) : InferenceHostApi
                 val container = parseGgufHeader(file)
                 loadedGgufInfo = container
                 loadedModel = request
-                callback(Result.success(true))
+                mainHandler.post {
+                    callback(Result.success(true))
+                }
             } catch (e: Exception) {
-                callback(Result.failure(e))
+                mainHandler.post {
+                    callback(Result.failure(e))
+                }
             }
         }
     }
@@ -49,9 +59,13 @@ class InferenceBridge(private val messenger: BinaryMessenger) : InferenceHostApi
                 loadedGgufInfo?.close()
                 loadedGgufInfo = null
                 loadedModel = null
-                callback(Result.success(Unit))
+                mainHandler.post {
+                    callback(Result.success(Unit))
+                }
             } catch (e: Exception) {
-                callback(Result.failure(e))
+                mainHandler.post {
+                    callback(Result.failure(e))
+                }
             }
         }
     }
@@ -81,19 +95,26 @@ class InferenceBridge(private val messenger: BinaryMessenger) : InferenceHostApi
                         val tokenDelay = (30 + (Math.random() * 20)).toLong()
                         Thread.sleep(tokenDelay)
 
-                        flutterApi.onToken(request.requestId, token) { }
+                        mainHandler.post {
+                            flutterApi.onToken(request.requestId, token) { }
+                        }
                         tokenCount++
                     }
 
                     if (!Thread.currentThread().isInterrupted) {
                         val duration = (System.currentTimeMillis() - startTime) / 1000.0
                         val tps = if (duration > 0) tokenCount / duration else 28.0
-                        flutterApi.onComplete(request.requestId, tokenCount, tps) { }
+                        mainHandler.post {
+                            flutterApi.onComplete(request.requestId, tokenCount, tps) { }
+                        }
                     }
                 } catch (e: InterruptedException) {
                     // Graceful cancellation
                 } catch (e: Exception) {
-                    flutterApi.onError(request.requestId, e.message ?: "Native inference error") { }
+                    val errMsg = e.message ?: "Native inference error"
+                    mainHandler.post {
+                        flutterApi.onError(request.requestId, errMsg) { }
+                    }
                 }
             }
             callback(Result.success(Unit))

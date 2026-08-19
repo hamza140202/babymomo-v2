@@ -405,7 +405,9 @@ class NavigationController extends GetxController {
         ),
       );
 
-      final stream = router.route(request);
+      final stream = localAdapter != null
+          ? localAdapter.infer(request)
+          : router.route(request);
 
       final tokenBuffer = StringBuffer();
       await for (final res in stream) {

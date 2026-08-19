@@ -159,8 +159,8 @@ class LlamaCppAdapter extends RuntimeEngine implements InferenceFlutterApi {
 
     _hostApi.startInference(NativeInferenceRequest(
       requestId: request.id,
-      prompt: userPrompt.isNotEmpty ? userPrompt : request.prompt,
-      systemPrompt: systemPrompt.isNotEmpty ? systemPrompt : request.systemPrompt,
+      prompt: request.prompt.isNotEmpty ? request.prompt : userPrompt,
+      systemPrompt: request.systemPrompt.isNotEmpty ? request.systemPrompt : systemPrompt,
       temperature: request.parameters.temperature,
       topP: request.parameters.topP,
       maxTokens: request.parameters.maxTokens,
