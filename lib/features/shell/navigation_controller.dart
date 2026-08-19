@@ -53,6 +53,7 @@ class NavigationController extends GetxController {
         if (exists) {
           if (activeModel.value == null && model.type == 'Text LLM') {
             activeModel.value = model;
+            loadModelForChat(model, notify: false);
           }
           // Auto-load first downloaded diffusion model for Studio
           // Prefer LCM models for fastest 4-step turbo generation (local-dream)
@@ -405,9 +406,19 @@ class NavigationController extends GetxController {
         ),
       );
 
-      final stream = localAdapter != null
+      final stream = (localAdapter != null
           ? localAdapter.infer(request)
-          : router.route(request);
+          : router.route(request)).timeout(
+        const Duration(seconds: 25),
+        onTimeout: (sink) {
+          sink.add(InferenceResult(
+            requestId: reqId,
+            content: '\n\n*(Inference timed out. Please try sending again.)*',
+            isDone: true,
+          ));
+          sink.close();
+        },
+      );
 
       final tokenBuffer = StringBuffer();
       await for (final res in stream) {

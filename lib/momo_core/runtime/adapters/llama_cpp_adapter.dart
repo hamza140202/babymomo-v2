@@ -17,6 +17,10 @@ class LlamaCppAdapter extends RuntimeEngine implements InferenceFlutterApi {
   bool _isInitialized = false;
   String? _loadedModelPath;
 
+  LlamaCppAdapter() {
+    InferenceFlutterApi.setUp(this);
+  }
+
   @override
   String get id => 'llama_cpp';
 
