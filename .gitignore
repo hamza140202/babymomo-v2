@@ -30,3 +30,7 @@ node_modules/
 package.json
 package-lock.json
 render_icon.js
+
+# Local Architecture Blueprints (Not tracked in Git)
+docs/architecture/secure_cloudflare_worker_llm_blueprint.md
+
