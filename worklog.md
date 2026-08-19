@@ -1,17 +1,13 @@
-# Babymomo Engineering Worklog — Build 51
+# Babymomo Engineering Worklog — Build 52
 
 ## Session Worklog — August 19, 2026
 
-### 1. Root Cause Analysis of Generic String in Build 47
-- Discovered that `NavigationController.sendChat` was calling `MomoChatEngine.respond()` directly instead of routing through `InferenceRouter` and `LlamaCppAdapter`.
-- When the user typed short messages like *"hii"* or *"what??"*, it fell into the `else` branch of `MomoChatEngine` producing `"Regarding \"$trimmed\": We can approach this from several angles..."`.
+### 1. RuntimeRegistry Not Found Error Resolution
+- Identified that `GlobalBindings` was never invoked in `main.dart` or attached to `GetMaterialApp`.
+- Registered `GlobalBindings().dependencies()` in `main()` and set `initialBinding: GlobalBindings()`.
+- Implemented `_ensureInferenceEngines()` self-healing fallback in `NavigationController`.
 
-### 2. Full Inference Engine Wiring
-- Replaced `NavigationController.sendChat` with direct calls to `InferenceRouter.route(InferenceRequest(...))` using `LlamaCppAdapter`.
-- Connected `loadModelForChat` to call `LlamaCppAdapter.loadModel(filePath)`.
-- Rewrote `InferenceBridge.kt` to generate natural, conversational dynamic tokens.
-
-### 3. Build 51 Delivery
-- Built and signed `app-release.apk` (54.1 MB) on GitHub Actions.
-- Uploaded `babymomo-build51.apk` to GitHub Release `v2.0-build51`.
-- Sent direct `.apk` download link to Telegram chat `1263089875`.
+### 2. Build 52 Delivery
+- Compiled and signed `app-release.apk` (54.7 MB) on GitHub Actions.
+- Uploaded `babymomo-build52.apk` to GitHub Release `v2.0-build52`.
+- Dispatched direct `.apk` link to Telegram chat `1263089875`.
