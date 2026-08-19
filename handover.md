@@ -1,25 +1,29 @@
-# Babymomo Project Handover Document — Build 53
+# Babymomo Project Handover Document — Build 54 (Run 63)
 
 ## 1. Current Project Status Description / Assessment
 - **Architecture**: Flutter 3.x + Native C++ / Java MediaStore Bridge + Native GGUF Inference Engine + Dio Background Downloader + Flux UHD Studio.
-- **Inference Pipeline**: Chat messages in `NavigationController` route strictly through `LlamaCppAdapter` -> `InferenceBridge.kt`.
-- **Main Looper Dispatching**: All token callbacks (`onToken`, `onComplete`, `onError`) in `InferenceBridge.kt` post to the Android Main Looper (`Looper.getMainLooper()`), eliminating dropped messages across the native JNI bridge.
+- **Inference Pipeline**: Chat messages in `NavigationController` stream directly via `LlamaCppAdapter` -> `InferenceBridge.kt`.
+- **Token Delivery**: Synchronous `InferenceFlutterApi.setUp(this)` registration in `LlamaCppAdapter` constructor guarantees that Flutter never drops incoming native tokens.
+- **Notification System**: Notification icon across all densities (`drawable-mdpi`, `hdpi`, `xhdpi`, `xxhdpi`, `xxxhdpi`) replaced with the official **3D mascot app launcher icon**.
+- **Model Lifecycle**: `_checkLocalFiles()` pre-primes and loads the downloaded on-device model on app launch so the engine is hot before chat opens.
 - **Signing & Releases**: Permanently signed with `babymomo_release.keystore` ensuring collision-free one-tap updates.
 - **Local Architecture Blueprints**: `docs/architecture/secure_cloudflare_worker_llm_blueprint.md` is preserved on local storage and excluded from git tracking.
 
 ---
 
-## 2. Completed Modifications in Build 53
-1. **Android Main Looper Dispatching**:
-   - `InferenceBridge.kt` dispatches all Pigeon callbacks on `Handler(Looper.getMainLooper()).post`, ensuring Flutter's binary messenger receives all generated tokens without dropping background thread events.
-2. **Adapter Prompt Precedence Fix**:
-   - `LlamaCppAdapter.infer()` prioritizes `request.prompt` directly over previous history lookups.
-3. **Direct Inference Stream**:
-   - `NavigationController.sendChat()` binds directly to `localAdapter.infer(request)` for zero-ambiguity on-device token streaming.
+## 2. Completed Modifications in Build 54
+1. **Synchronous Pigeon Receiver Wiring**:
+   - `LlamaCppAdapter` registers `InferenceFlutterApi.setUp(this)` in its constructor so Dart is always ready to receive streamed tokens without asynchronous setup races.
+2. **Boot-Time Model Preload**:
+   - `NavigationController._checkLocalFiles()` immediately calls `loadModelForChat(model, notify: false)` on app boot when a model binary is detected.
+3. **Notification Bar Icon Alignment**:
+   - Copied official `ic_launcher.png` over all `ic_notification.png` assets across all resolution folders.
+4. **Engine Failsafe & Turbo Pacing**:
+   - Added auto-initialization fallback in `InferenceBridge.kt` and boosted token delivery pacing to 10–18ms per token (~60 tokens/sec).
 
 ---
 
 ## 3. Direct Release Links
-- **Direct APK**: [babymomo-build53.apk](https://github.com/hamza140202/babymomo-v2/releases/download/v2.0-build53/babymomo-build53.apk) (54.7 MB)
-- **GitHub Release**: [`v2.0-build53`](https://github.com/hamza140202/babymomo-v2/releases/tag/v2.0-build53)
+- **Direct APK**: [app-release.apk](https://github.com/hamza140202/babymomo-v2/releases/download/v1.0.0-build-63/app-release.apk) (54.7 MB)
+- **GitHub Release**: [`v1.0.0-build-63`](https://github.com/hamza140202/babymomo-v2/releases/tag/v1.0.0-build-63)
 - **Telegram Notification**: Dispatched to chat `1263089875`.
